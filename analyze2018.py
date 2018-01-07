@@ -65,9 +65,9 @@ def qual_model():
     
     print('Chokehold Score:', chokescore)
     
-    print('Max points without scale', maxscore - maxscalepoints)
+    print('Max points without scale:', maxscore - maxscalepoints)
     
-    print('Max points without climbing', maxscore - maxclimb + 3 * park)
+    print('Max points without climbing:', maxscore - maxclimb + 3 * park)
     
 
     
