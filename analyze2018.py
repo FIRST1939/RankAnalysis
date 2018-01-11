@@ -8,6 +8,7 @@ Models 2018 game and ranking movement
 from pprint import pprint
 import pandas as pd
 import tbaUtils as tba
+import matplotlib
 
 def qual_model():
     autoticks = 15
@@ -33,12 +34,15 @@ def qual_model():
     winrp = 2
     tierp = 1
     
-    maxautoscale = autoscaleown  + autoscaletick * autoticks 
-    maxautoswitch = autoswitchown + autoswitchtick * autoticks
-    maxautoscore = autorun + maxautoscale + maxautoswitch
+    #Per team update 1, the scale has to tip for a full second to establish
+    #Ownership, so removing the tick 0 points for ownership    
     
-    maxtelescale = telescaleown + telescaletick * teleticks
-    maxteleswitch = teleswitchown + teleswitchtick * teleticks
+    maxautoscale = autoscaletick * autoticks 
+    maxautoswitch = autoswitchtick * autoticks
+    maxautoscore = autorun * 3 + maxautoscale + maxautoswitch
+    
+    maxtelescale = telescaletick * teleticks
+    maxteleswitch = teleswitchtick * teleticks
     maxvault = vaultcube * maxcube
     maxclimb = 3 * climb
     maxboost = boosttickbonus * boosttime
