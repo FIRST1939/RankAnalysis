@@ -44,7 +44,7 @@ def makematchlist(event='mokc'):
     
     Basic strategy is to take the nested levels from a single match and 
     move them into a single-level dictionary, then append them to a new list of
-    matches.
+    matches.  Also calculating ranking points for each alliance and fixing types.
     
     After finishing, I force the matches into a pandas DataFrame using the 
     match key formatted like '2015mokc_qm64' as the index.
@@ -67,16 +67,16 @@ def makematchlist(event='mokc'):
         
         #Pick up the basic information
         flatmatch['matchtype'] = match['comp_level']
-        flatmatch['matchnum'] = match['match_number']
+        flatmatch['matchnum'] = int(match['match_number'])
         
         # Convert the lists of teams to individual positions
         # Change'frc2164' -> '2164' as I go to match the team list
-        flatmatch['blue1'] = match['alliances']['blue']['teams'][0][3:] 
-        flatmatch['blue2'] = match['alliances']['blue']['teams'][1][3:]
-        flatmatch['blue3'] = match['alliances']['blue']['teams'][2][3:]
-        flatmatch['red1'] = match['alliances']['red']['teams'][0][3:]
-        flatmatch['red2'] = match['alliances']['red']['teams'][1][3:]
-        flatmatch['red3'] = match['alliances']['red']['teams'][2][3:]
+        flatmatch['blue1'] = int(match['alliances']['blue']['teams'][0][3:])
+        flatmatch['blue2'] = int(match['alliances']['blue']['teams'][1][3:])
+        flatmatch['blue3'] = int(match['alliances']['blue']['teams'][2][3:])
+        flatmatch['red1'] = int(match['alliances']['red']['teams'][0][3:])
+        flatmatch['red2'] = int(match['alliances']['red']['teams'][1][3:])
+        flatmatch['red3'] = int(match['alliances']['red']['teams'][2][3:])
         
         # Make a list of the teams that don't get seeding points for this match
         flatmatch['ineligible'] = []
@@ -106,6 +106,18 @@ def makematchlist(event='mokc'):
         flatmatch['redtotepts'] = match['score_breakdown']['red']['tote_points']
         flatmatch['redlitterpts'] = match['score_breakdown']['red']['litter_points']        
         
+        # Calculate RP for red and blue based on match winner
+
+        if flatmatch['bluescore'] > flatmatch['redscore']:
+            flatmatch['bluerp'] = 2
+            flatmatch['redrp'] = 0
+        elif flatmatch['bluescore'] < flatmatch['redscore']:
+            flatmatch['bluerp'] = 0
+            flatmatch['redrp'] = 2
+        else: #tied
+            flatmatch['bluerp'] = 1
+            flatmatch['redrp'] = 1
+        
         #Take the complete match and add it to the match list
         flatmatchlist.append(flatmatch)
 
@@ -113,13 +125,61 @@ def makematchlist(event='mokc'):
     flatmatchdf = pd.DataFrame(flatmatchlist, index=key)        
     return flatmatchdf
         
-def calc_seed(matchdf, teamlist):        
+def team_seedpts(matchdf, teamlist):        
     '''
     Take a match results dataframe and a list of teams and create a dataframe
-    that contains the seeding rank of each team match by match as the event
+    that contains the seeding points to be applied to each team match by match as the event
     progresses
     '''
-    pass #This command does nothing and makes the stub compile cleanly
+    
+    bluecolumns = ['bluescore', 'bluerp', 'cooppts', 'blueautopts',
+                   'bluecontainerpts', 'bluetotepts', 'bluelitterpts',
+                   'ineligible']
+    redcolumns = ['redscore', 'redrp', 'cooppts', 'redautopts',
+                  'redcontainerpts', 'redtotepts', 'redlitterpts',
+                  'ineligible']
+                  
+    columns = ['matchnum', 'team', 'score', 'rp', 'cooppts', 'autopts',
+               'containerpts', 'totepts', 'litterpts', 'ineligible']
+                  
+    # For each blue team, make a dataframe with their correct columns                  
+
+    blue1df = matchdf.reset_index().set_index(['matchnum', 'blue1'])[bluecolumns]
+    blue2df = matchdf.reset_index().set_index(['matchnum', 'blue2'])[bluecolumns]
+    blue3df = matchdf.reset_index().set_index(['matchnum', 'blue3'])[bluecolumns]
+
+    # Merge the tables together, then fix the headers to a generic
+    blues = [blue1df, blue2df, blue3df]
+    bluedf = pd.concat(blues)
+    
+    bluedf.reset_index(inplace = True)
+    
+    bluedf.columns = columns
+    
+    # Same again, but for red
+    
+    red1df = matchdf.reset_index().set_index(['matchnum', 'red1'])[redcolumns]
+    red2df = matchdf.reset_index().set_index(['matchnum', 'red2'])[redcolumns]
+    red3df = matchdf.reset_index().set_index(['matchnum', 'red3'])[redcolumns]
+    
+    reds = [red1df, red2df, red3df]
+    
+    reddf = pd.concat(reds)
+    
+    reddf.reset_index(inplace = True)
+    
+    reddf.columns = columns
+    
+    # Now that the columns are aligned, glue red and blue together 
+    
+    fulldf = pd.concat([reddf,bluedf])
+    
+           
+    print(fulldf[fulldf['team'] == 1939])
+    
+    # Going to need to fix this later to delete row if ineligible.
+    
+    return fulldf
     
 
 def strip_elims(matchdf):
@@ -132,8 +192,23 @@ def strip_elims(matchdf):
     
     newdf.set_index('matchnum', inplace = True)
     
-    print(newdf.head())
+    #print(newdf.head())
     
     return newdf
     
-        
+def Main():
+    '''
+    Runs functions in correct order to generate the rankings
+    '''
+    print('Getting team list\n')
+    teamlist = maketeamlist()
+    
+    print('Making match list and stripping elim rounds\n')
+    matchdf = strip_elims(makematchlist())
+    
+    print('Calculating seeding points\n')
+    
+    allianceSeedPts = team_seedpts(matchdf, teamlist)
+
+
+Main()        
