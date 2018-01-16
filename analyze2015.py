@@ -128,5 +128,12 @@ def strip_elims(matchdf):
     Change the key to the match number so they will sort better.
     '''
 
-    print(matchdf[matchdf.matchtype == 'qm'])
+    newdf = matchdf[matchdf.matchtype == 'qm']
+    
+    newdf.set_index('matchnum', inplace = True)
+    
+    print(newdf.head())
+    
+    return newdf
+    
         
