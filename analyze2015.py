@@ -34,7 +34,13 @@ def maketeamlist(event='mokc'):
     
     #print(teamdf)
     
-    return(teamdf.team_number)    
+    teamseries = teamdf.team_number
+    
+    answer = pd.Series.tolist(teamseries)
+    
+    print(type(answer[0]))
+    
+    return(answer)    
     
 
 def makematchlist(event='mokc'):
@@ -125,11 +131,11 @@ def makematchlist(event='mokc'):
     flatmatchdf = pd.DataFrame(flatmatchlist, index=key)        
     return flatmatchdf
         
-def team_seedpts(matchdf, teamlist):        
+def team_seedpts(matchdf):        
     '''
-    Take a match results dataframe and a list of teams and create a dataframe
-    that contains the seeding points to be applied to each team match by match as the event
-    progresses
+    Take a match results dataframe and create a dataframe
+    that contains the seeding points to be applied to each team match by match
+    as the event progresses
     '''
     
     bluecolumns = ['bluescore', 'bluerp', 'cooppts', 'blueautopts',
@@ -196,6 +202,40 @@ def strip_elims(matchdf):
     
     return newdf
     
+def matchmtx(teamPts, teamlist):
+    '''
+    Take the points for each match and apply them to the teams
+    '''
+    print(teamPts[teamPts['matchnum'] == 1])
+    
+    print('Matches Played', max(teamPts['matchnum']))
+    
+    maxmatch = max(teamPts['matchnum'])
+    
+#    for match in range(1,maxmatch+1):
+#        for team in [1939]:
+#            print(match)
+#            print(teamPts[teamPts['matchnum'] <= match, teamPts['team'] == team])
+    for team in teamlist:
+        shortdf = teamPts[teamPts['team'] == team]
+        #print(shortdf)
+        rp = [0] #at match 0, you have 0 RP
+        for match in range(1, maxmatch+1):            
+            if shortdf[shortdf['matchnum'] == match].empty:
+                rpts = rp[match - 1]
+            else:
+                #print(shortdf[shortdf['matchnum'] == match]['rp'])
+                rpts = rp[match - 1] + shortdf[shortdf['matchnum']== match]['rp'].iloc[0]
+            rp.append(rpts)
+            
+        print(team, rp)
+            
+            
+            
+        
+    
+    
+    
 def Main():
     '''
     Runs functions in correct order to generate the rankings
@@ -208,7 +248,11 @@ def Main():
     
     print('Calculating seeding points\n')
     
-    allianceSeedPts = team_seedpts(matchdf, teamlist)
+    teamSeedPts = team_seedpts(matchdf)
+    
+    print('Calculating seeding points over time\n')
+    
+    matchseedmtx = matchmtx(teamSeedPts, teamlist)
 
 
 Main()        
