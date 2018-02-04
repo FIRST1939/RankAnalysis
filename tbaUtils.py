@@ -13,7 +13,7 @@ import os.path
 from time import sleep
 import pandas as pd
 
-URL = 'http://www.thebluealliance.com/api/v2/'
+URL = 'http://www.thebluealliance.com/api/v3/'
 
 THISYEAR = 2018
 
@@ -21,7 +21,7 @@ THISYEAR = 2018
 X-TBA-App-Id is required by the blue alliance api for tracking
 Default User-Agent value causes 403 Forbidden so I pretend to be a browser.
 '''
-REQHEADERS = {'X-TBA-App-Id': 'vhcook-frc1939:scouting:2',
+REQHEADERS = {'X-TBA-Auth-Key': 'noZ6Q6W3YhLxNHL7IQzCxTTDzSfCzeOPbcNN7lsRoUFyYbkfnoQXnFrGYM9Ecoeo',
               'User-Agent': 'Mozilla/5.0'}
               
               
@@ -36,31 +36,29 @@ def get_team(team_num):
     fullurl = URL + 'team/frc' + str(team_num)
     result = get_request(fullurl)
     return result
-   
     
 def get_team_bots(team_num):
-    fullurl = URL + 'team/frc' + str(team_num) + '/history/robots'
+    fullurl = URL + 'team/frc' + str(team_num) + '/robots'
     print(fullurl)
     result = get_request(fullurl)
     return result
     
 def get_team_history(team_num):
-    fullurl = URL + 'team/frc' + str(team_num) + '/history/events'
+    fullurl = URL + 'team/frc' + str(team_num) + '/events/keys'
     print(fullurl)
     result = get_request(fullurl)
     print('tick')
     return result
 
-
 def get_award_history(team_num):    
-    fullurl = URL + 'team/frc' + str(team_num) + '/history/awards'
+    fullurl = URL + 'team/frc' + str(team_num) + '/awards'
     print(fullurl)
     result = get_request(fullurl)
     print('tick')
     return result
 
 def get_team_year(team_num, year):
-    fullurl = URL + 'team/frc' + str(team_num) + '/' + str(year) + '/events'
+    fullurl = URL + 'team/frc' + str(team_num) + '/events/' + str(year)
     print(fullurl)
     result = get_request(fullurl)
     return result
@@ -84,17 +82,17 @@ def get_event_matches(event, year=THISYEAR):
     print(fullurl)
     result = get_request(fullurl)
     return result
-    
+# last validated       
 def get_one_match(key):
     fullurl = URL + 'match/' + key
     print(fullurl)
     result = get_request(fullurl)
     return result
     
-def get_event_stats(event, year=THISYEAR):
+def get_event_insights(event, year=THISYEAR):
     #OPR, DPR, CCWM
     event_key = str(year) + event
-    fullurl = URL + 'event/' + event_key + '/stats'
+    fullurl = URL + 'event/' + event_key + '/insights'
     print(fullurl)
     result = get_request(fullurl)
     return result    
@@ -103,6 +101,14 @@ def get_event_awards(event, year=THISYEAR):
     # www.thebluealliance.com/api/v2/event/<event key>/awards
     event_key = str(year) + event
     fullurl = URL + 'event/' + event_key + '/awards'
+    print(fullurl)
+    result = get_request(fullurl)
+    return result    
+    
+def get_event_rankings(event, year=THISYEAR):
+    #OPR, DPR, CCWM
+    event_key = str(year) + event
+    fullurl = URL + 'event/' + event_key + '/rankings'
     print(fullurl)
     result = get_request(fullurl)
     return result    
