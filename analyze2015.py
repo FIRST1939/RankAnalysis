@@ -77,24 +77,24 @@ def makematchlist(event='mokc'):
         
         # Convert the lists of teams to individual positions
         # Change'frc2164' -> '2164' as I go to match the team list
-        flatmatch['blue1'] = int(match['alliances']['blue']['teams'][0][3:])
-        flatmatch['blue2'] = int(match['alliances']['blue']['teams'][1][3:])
-        flatmatch['blue3'] = int(match['alliances']['blue']['teams'][2][3:])
-        flatmatch['red1'] = int(match['alliances']['red']['teams'][0][3:])
-        flatmatch['red2'] = int(match['alliances']['red']['teams'][1][3:])
-        flatmatch['red3'] = int(match['alliances']['red']['teams'][2][3:])
+        flatmatch['blue1'] = int(match['alliances']['blue']['team_keys'][0][3:])
+        flatmatch['blue2'] = int(match['alliances']['blue']['team_keys'][1][3:])
+        flatmatch['blue3'] = int(match['alliances']['blue']['team_keys'][2][3:])
+        flatmatch['red1'] = int(match['alliances']['red']['team_keys'][0][3:])
+        flatmatch['red2'] = int(match['alliances']['red']['team_keys'][1][3:])
+        flatmatch['red3'] = int(match['alliances']['red']['team_keys'][2][3:])
         
         # Make a list of the teams that don't get seeding points for this match
         flatmatch['ineligible'] = []
         
-        if len(match['alliances']['blue']['dqs']) > 0:
-            flatmatch['ineligible'].extend(match['alliances']['blue']['dqs'])
-        if len(match['alliances']['blue']['surrogates']) > 0:
-            flatmatch['ineligible'].extend(match['alliances']['blue']['surrogates'])
-        if len(match['alliances']['red']['dqs']) > 0:
-            flatmatch['ineligible'].extend(match['alliances']['red']['dqs'])        
-        if len(match['alliances']['red']['surrogates']) > 0:
-            flatmatch['ineligible'].extend(match['alliances']['red']['surrogates'])
+        if len(match['alliances']['blue']['dq_team_keys']) > 0:
+            flatmatch['ineligible'].extend(match['alliances']['blue']['dq_team_keys'])
+        if len(match['alliances']['blue']['surrogate_team_keys']) > 0:
+            flatmatch['ineligible'].extend(match['alliances']['blue']['surrogate_team_keys'])
+        if len(match['alliances']['red']['dq_team_keys']) > 0:
+            flatmatch['ineligible'].extend(match['alliances']['red']['dq_team_keys'])        
+        if len(match['alliances']['red']['surrogate_team_keys']) > 0:
+            flatmatch['ineligible'].extend(match['alliances']['red']['surrogate_team_keys'])
             
         if len(flatmatch['ineligible']) > 0:
             print(flatmatch['ineligible'])
@@ -212,24 +212,45 @@ def matchmtx(teamPts, teamlist):
     
     maxmatch = max(teamPts['matchnum'])
     
-#    for match in range(1,maxmatch+1):
-#        for team in [1939]:
-#            print(match)
-#            print(teamPts[teamPts['matchnum'] <= match, teamPts['team'] == team])
+    teamPtsByMatch = []
     for team in teamlist:
         shortdf = teamPts[teamPts['team'] == team]
         #print(shortdf)
         rp = [0] #at match 0, you have 0 RP
+        coop = [0]
+        auto = [0]
+        cont = [0]
+        tote = [0]
+        litter = [0]
+        
         for match in range(1, maxmatch+1):            
             if shortdf[shortdf['matchnum'] == match].empty:
                 rpts = rp[match - 1]
+                cpts = coop[match - 1]
+                apts = auto[match - 1]
+                ctpts = cont[match - 1]
+                tpts = tote[match - 1]
+                lpts = litter[match - 1]
             else:
                 #print(shortdf[shortdf['matchnum'] == match]['rp'])
                 rpts = rp[match - 1] + shortdf[shortdf['matchnum']== match]['rp'].iloc[0]
+                cpts = coop[match - 1] + shortdf[shortdf['matchnum']== match]['cooppts'].iloc[0]
+                apts = auto[match - 1] + shortdf[shortdf['matchnum']== match]['autopts'].iloc[0]
+                ctpts = cont[match - 1] + shortdf[shortdf['matchnum']== match]['containerpts'].iloc[0]
+                tpts = tote[match - 1] + shortdf[shortdf['matchnum']== match]['totepts'].iloc[0]
+                lpts = litter[match - 1] + shortdf[shortdf['matchnum']== match]['litterpts'].iloc[0]
             rp.append(rpts)
-            
-        print(team, rp)
-            
+            coop.append(cpts)
+            auto.append(apts)
+            cont.append(ctpts)
+            tote.append(tpts)
+            litter.append(lpts)
+         
+        print(team, cont, tote, litter)
+        teamPtsByMatch.append({'team': team, 'rp': rp, 'coop': coop, 'auto': auto,
+                               'container': cont, 'tote':tote, 'litter': litter})
+        
+        
             
             
         
