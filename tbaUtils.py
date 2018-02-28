@@ -112,3 +112,12 @@ def get_event_rankings(event, year=THISYEAR):
     print(fullurl)
     result = get_request(fullurl)
     return result    
+
+def make_eventweekmtx(year=THISYEAR):
+    eventlist = get_event_list(year)
+    
+    matrix = {}
+    for event in eventlist:
+        matrix[event['event_code']] = event['week']
+        
+    return matrix
