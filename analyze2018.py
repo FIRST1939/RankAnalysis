@@ -103,51 +103,53 @@ def interesting_stats(event):
         penalties = []
         scores = []
         pu = []
-       
-        for alliance in ['red', 'blue']:
-            for bot in ['Robot1', 'Robot2', 'Robot3']:
-                if event['score_breakdown'][alliance]['endgame' + bot] == 'Climbing':
-                    climbs += 1
-                if event['score_breakdown'][alliance]['auto' + bot] == 'AutoRun':
-                    autorun += 1
-            if event['score_breakdown'][alliance]['autoQuestRankingPoint']:
-                quests += 1
-            if event['score_breakdown'][alliance]['faceTheBossRankingPoint']:
-                boss += 1
-                if boss > 2:
-                    print('\nSomething is weird here\n')
-                    pprint(event)
-            for item in ['Boost', 'Force', 'Levitate']:
-                pu.append(event['score_breakdown'][alliance]['vault'+item+'Played'])
-            penalties.append(event['score_breakdown'][alliance]['foulPoints'])
-            scores.append(event['alliances'][alliance]['score'])
-            
-        margin = abs(scores[0] - scores[1])
-        if scores[0] > scores[1]: #red victory
-            if margin < (penalties[0] - penalties[1]):
-                #Red received more foul points than the margin
-                results[event['comp_level']]['fv'].append(1)
-            else:
-                results[event['comp_level']]['fv'].append(0)
-        elif scores[0] < scores[1]: #blue victory
-            if margin < (penalties[1] - penalties[0]):
-                #Blue received more foul points than the margin
-                results[event['comp_level']]['fv'].append(1)
-            else:
-                results[event['comp_level']]['fv'].append(0)
-        else: #tie
-            if penalties[1] != penalties[0]:
-                #Tied because of penalty points
-                results[event['comp_level']]['fv'].append(1)
-            else:
-                results[event['comp_level']]['fv'].append(0)
         
-        results[event['comp_level']]['mp'] += 1
-        results[event['comp_level']]['climbs'].append(climbs)
-        results[event['comp_level']]['autorun'].append(autorun)
-        results[event['comp_level']]['quests'].append(quests)
-        results[event['comp_level']]['boss'].append(boss)
-        results[event['comp_level']]['pu'].append(pu)
+        if event['actual_time'] != None:
+        
+            for alliance in ['red', 'blue']:
+                for bot in ['Robot1', 'Robot2', 'Robot3']:
+                    if event['score_breakdown'][alliance]['endgame' + bot] == 'Climbing':
+                        climbs += 1
+                    if event['score_breakdown'][alliance]['auto' + bot] == 'AutoRun':
+                        autorun += 1
+                if event['score_breakdown'][alliance]['autoQuestRankingPoint']:
+                    quests += 1
+                if event['score_breakdown'][alliance]['faceTheBossRankingPoint']:
+                    boss += 1
+                    if boss > 2:
+                        print('\nSomething is weird here\n')
+                        pprint(event)
+                for item in ['Boost', 'Force', 'Levitate']:
+                    pu.append(event['score_breakdown'][alliance]['vault'+item+'Played'])
+                penalties.append(event['score_breakdown'][alliance]['foulPoints'])
+                scores.append(event['alliances'][alliance]['score'])
+                
+            margin = abs(scores[0] - scores[1])
+            if scores[0] > scores[1]: #red victory
+                if margin < (penalties[0] - penalties[1]):
+                    #Red received more foul points than the margin
+                    results[event['comp_level']]['fv'].append(1)
+                else:
+                    results[event['comp_level']]['fv'].append(0)
+            elif scores[0] < scores[1]: #blue victory
+                if margin < (penalties[1] - penalties[0]):
+                    #Blue received more foul points than the margin
+                    results[event['comp_level']]['fv'].append(1)
+                else:
+                    results[event['comp_level']]['fv'].append(0)
+            else: #tie
+                if penalties[1] != penalties[0]:
+                    #Tied because of penalty points
+                    results[event['comp_level']]['fv'].append(1)
+                else:
+                    results[event['comp_level']]['fv'].append(0)
+            
+            results[event['comp_level']]['mp'] += 1
+            results[event['comp_level']]['climbs'].append(climbs)
+            results[event['comp_level']]['autorun'].append(autorun)
+            results[event['comp_level']]['quests'].append(quests)
+            results[event['comp_level']]['boss'].append(boss)
+            results[event['comp_level']]['pu'].append(pu)
     
     return results
         
@@ -160,74 +162,91 @@ def prop_bets(event):
     for complvl in raw:
         cooked[complvl] = {}
         
-        cooked[complvl]['autorun'] = sum(raw[complvl]['autorun']) / raw[complvl]['mp']
-        cooked[complvl]['boss'] = sum(raw[complvl]['boss']) / raw[complvl]['mp']
-        cooked[complvl]['quests'] = sum(raw[complvl]['quests']) / raw[complvl]['mp']
-        cooked[complvl]['climbs'] = sum(raw[complvl]['climbs']) / raw[complvl]['mp']
-        cooked[complvl]['foulvictory'] = sum(raw[complvl]['fv']) / raw[complvl]['mp']
-        
-        cooked[complvl]['powerUp'] = {}
-        cooked[complvl]['powerUp']['Boost'] = [0, 0, 0, 0] #Total, L1, L2, L3
-        cooked[complvl]['powerUp']['Force'] = [0, 0, 0, 0]
-        cooked[complvl]['powerUp']['Levitate'] = 0
+        if raw[complvl]['mp'] != 0:
+            cooked[complvl]['autorun'] = sum(raw[complvl]['autorun']) / raw[complvl]['mp']
+            cooked[complvl]['boss'] = sum(raw[complvl]['boss']) / raw[complvl]['mp']
+            cooked[complvl]['quests'] = sum(raw[complvl]['quests']) / raw[complvl]['mp']
+            cooked[complvl]['climbs'] = sum(raw[complvl]['climbs']) / raw[complvl]['mp']
+            cooked[complvl]['foulvictory'] = sum(raw[complvl]['fv']) / raw[complvl]['mp']
+            
+            cooked[complvl]['powerUp'] = {}
+            cooked[complvl]['powerUp']['Boost'] = [0, 0, 0, 0] #Total, L1, L2, L3
+            cooked[complvl]['powerUp']['Force'] = [0, 0, 0, 0]
+            cooked[complvl]['powerUp']['Levitate'] = 0
+                    
+            for match in raw[complvl]['pu']:
+                if match[0] == 1:
+                    cooked[complvl]['powerUp']['Boost'][0] += 1
+                    cooked[complvl]['powerUp']['Boost'][1] += 1
+                elif match[0] == 2:                
+                    cooked[complvl]['powerUp']['Boost'][0] += 1
+                    cooked[complvl]['powerUp']['Boost'][2] += 1
+                elif match[0] == 3:                
+                    cooked[complvl]['powerUp']['Boost'][0] += 1
+                    cooked[complvl]['powerUp']['Boost'][3] += 1                
+            
+                if match[3] == 1:
+                    cooked[complvl]['powerUp']['Boost'][0] += 1
+                    cooked[complvl]['powerUp']['Boost'][1] += 1
+                elif match[3] == 2:                
+                    cooked[complvl]['powerUp']['Boost'][0] += 1
+                    cooked[complvl]['powerUp']['Boost'][2] += 1
+                elif match[3] == 3:                
+                    cooked[complvl]['powerUp']['Boost'][0] += 1
+                    cooked[complvl]['powerUp']['Boost'][3] += 1                
+    
+                if match[1] == 1:
+                    cooked[complvl]['powerUp']['Force'][0] += 1
+                    cooked[complvl]['powerUp']['Force'][1] += 1
+                elif match[1] == 2:                
+                    cooked[complvl]['powerUp']['Force'][0] += 1
+                    cooked[complvl]['powerUp']['Force'][2] += 1
+                elif match[1] == 3:                
+                    cooked[complvl]['powerUp']['Force'][0] += 1
+                    cooked[complvl]['powerUp']['Force'][3] += 1                
+    
+                if match[4] == 1:
+                    cooked[complvl]['powerUp']['Force'][0] += 1
+                    cooked[complvl]['powerUp']['Force'][1] += 1
+                elif match[4] == 2:                
+                    cooked[complvl]['powerUp']['Force'][0] += 1
+                    cooked[complvl]['powerUp']['Force'][2] += 1
+                elif match[4] == 3:                
+                    cooked[complvl]['powerUp']['Force'][0] += 1
+                    cooked[complvl]['powerUp']['Force'][3] += 1         
                 
-        for match in raw[complvl]['pu']:
-            if match[0] == 1:
-                cooked[complvl]['powerUp']['Boost'][0] += 1
-                cooked[complvl]['powerUp']['Boost'][1] += 1
-            elif match[0] == 2:                
-                cooked[complvl]['powerUp']['Boost'][0] += 1
-                cooked[complvl]['powerUp']['Boost'][2] += 1
-            elif match[0] == 3:                
-                cooked[complvl]['powerUp']['Boost'][0] += 1
-                cooked[complvl]['powerUp']['Boost'][3] += 1                
-        
-            if match[3] == 1:
-                cooked[complvl]['powerUp']['Boost'][0] += 1
-                cooked[complvl]['powerUp']['Boost'][1] += 1
-            elif match[3] == 2:                
-                cooked[complvl]['powerUp']['Boost'][0] += 1
-                cooked[complvl]['powerUp']['Boost'][2] += 1
-            elif match[3] == 3:                
-                cooked[complvl]['powerUp']['Boost'][0] += 1
-                cooked[complvl]['powerUp']['Boost'][3] += 1                
-
-            if match[1] == 1:
-                cooked[complvl]['powerUp']['Force'][0] += 1
-                cooked[complvl]['powerUp']['Force'][1] += 1
-            elif match[1] == 2:                
-                cooked[complvl]['powerUp']['Force'][0] += 1
-                cooked[complvl]['powerUp']['Force'][2] += 1
-            elif match[1] == 3:                
-                cooked[complvl]['powerUp']['Force'][0] += 1
-                cooked[complvl]['powerUp']['Force'][3] += 1                
-
-            if match[4] == 1:
-                cooked[complvl]['powerUp']['Force'][0] += 1
-                cooked[complvl]['powerUp']['Force'][1] += 1
-            elif match[4] == 2:                
-                cooked[complvl]['powerUp']['Force'][0] += 1
-                cooked[complvl]['powerUp']['Force'][2] += 1
-            elif match[4] == 3:                
-                cooked[complvl]['powerUp']['Force'][0] += 1
-                cooked[complvl]['powerUp']['Force'][3] += 1         
+                if match[2] == 3:
+                    cooked[complvl]['powerUp']['Levitate'] += 1
+                if match[5] == 3:
+                    cooked[complvl]['powerUp']['Levitate'] += 1
+                
+            putot = cooked[complvl]['powerUp']['Boost'][0] 
+            putot += cooked[complvl]['powerUp']['Force'][0]
+            putot += cooked[complvl]['powerUp']['Levitate']
             
-            if match[2] == 3:
-                cooked[complvl]['powerUp']['Levitate'] += 1
-            if match[5] == 3:
-                cooked[complvl]['powerUp']['Levitate'] += 1
+            cooked[complvl]['puavg'] = putot /  raw[complvl]['mp']
             
-        putot = cooked[complvl]['powerUp']['Boost'][0] 
-        putot += cooked[complvl]['powerUp']['Force'][0]
-        putot += cooked[complvl]['powerUp']['Levitate']
-        
-        cooked[complvl]['puavg'] = putot /  raw[complvl]['mp']
-        
-        cooked[complvl]['mp'] = raw[complvl]['mp']
+            cooked[complvl]['mp'] = raw[complvl]['mp']
     
     return cooked
     
-
+def prop_bets_week(week):
+    scratch, eventmtx = make_eventweekmtx()
+    
+    eventlist = eventmtx[week]
+    
+    props = {}
+    
+    for event in eventlist:
+        print(event)
+        props[event] = prop_bets(event)['qm']
+    
+    pprint(props)
+    
+    propdf = pd.DataFrame(props).transpose()
+    print(propdf)
+    
+    propdf.to_excel('prop_bets.xlsx')
                     
         
             

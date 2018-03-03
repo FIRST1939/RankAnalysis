@@ -119,5 +119,17 @@ def make_eventweekmtx(year=THISYEAR):
     matrix = {}
     for event in eventlist:
         matrix[event['event_code']] = event['week']
+    
+    weeklist = {}
+    for event in matrix:
+        if matrix[event] == None:
+            week = 0
+        else:
+            week = matrix[event] + 1
+            
+        if week not in weeklist:
+            weeklist[week] = []
         
-    return matrix
+        weeklist[week].append(event)
+        
+    return matrix, weeklist
