@@ -108,6 +108,9 @@ def interesting_stats(event):
         
             for alliance in ['red', 'blue']:
                 for bot in ['Robot1', 'Robot2', 'Robot3']:
+                    #print(event['score_breakdown'][alliance])
+                    #print(alliance, bot)
+                    #print(event['score_breakdown'][alliance]['endgame' + bot])
                     if event['score_breakdown'][alliance]['endgame' + bot] == 'Climbing':
                         climbs += 1
                     if event['score_breakdown'][alliance]['auto' + bot] == 'AutoRun':
@@ -244,11 +247,18 @@ def prop_bets_week(week):
     pprint(props)
     
     propdf = pd.DataFrame(props).transpose()
+    
+    cols = propdf.columns.tolist()
+    
+    #cols = ['autorun', 'boss', 'climbs', 'foulvictory', 'mp', 'powerUp', 'puavg', 'quests']
+    cols = ['mp', 'foulvictory', 'autorun', 'quests', 'climbs', 'boss', 'puavg', 'powerUp']
+    
+    propdf = propdf[cols]
     print(propdf)
     
     propdf.to_excel('prop_bets.xlsx')
                     
-        
+
             
             
     
