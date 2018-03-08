@@ -5,9 +5,20 @@ Created on Sun Mar  4 21:58:47 2018
 
 Event prescout with emphasis on past performance and interesting judging
 things.
+
+Fix list:
+
+Fix the scratchfile write
+Make a week by week matrix of who is playing when this year
+Pull the Key Codex from the file
+Replace the award numbers with names from the codex
+Fix the excel write
+Who won what last year and write to teh excel
+Do a breakdown on the bad awards by level (CCA/RCA/DCA using the event codes)
 """
 import tbaUtils
 import pandas as pd
+from pprint import pprint
 
 YEAR = '2018'
 
@@ -126,8 +137,21 @@ def prescout_event(event):
         file.write(str(current))
         file.write('\n\nAward List\n')
         file.write(str(allawds))
+        file.write('\n\nAward Keys\n')
+        file.write(str(awdkeys))
    
-    awdmtxdf = pd.DataFrame(awdmx)        
-    awdkeydf = pd.DataFrame(awdkeys)
+    awdmtxdf = pd.DataFrame(awdmx)
+    pprint(current)        
     
-    #with pd.ExcelWriter(outfile) as writer:
+    pprint(awdkeys)
+
+    print()    
+    teamdf = pd.DataFrame(teamlist)
+    #currdf = pd.DataFrame(current)
+    #awdkeydf = pd.DataFrame(awdkeys)
+    
+    
+    
+    with pd.ExcelWriter(xlfile) as writer:
+        awdmtxdf.to_excel(writer, 'Award Matrix')
+        teamdf.to_excel(writer, 'Team List', index=False)
