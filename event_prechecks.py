@@ -22,6 +22,19 @@ from pprint import pprint
 
 YEAR = '2018'
 
+MASTERKEYS = {0: 'RCA/CCA',1: 'Winner',2: 'Finalist',3: 'WFFA/WFA',4: 'DLFA',
+              5: 'Volunteer of the Year',9: 'REI/EI',10: 'Rookie All-Star',
+              11: 'Gracious Professionalism',12: 'Coopertition',13: 'Judges',
+              14: 'Highest Rookie Seed',15: 'Rookie Inspiration',16: 'GM Industrial Design',
+              17: 'Quality',18: 'Safety',19: 'Sportsmanship',20: 'Creativity',
+              21: 'Excellence in Engineering',22: 'Entrepreneurship',
+              23: 'Autodesk Excellence in Design',26: 'Delphi Driving Tomorrows Technology',
+              27: 'Imagery',29: 'Innovation in Control',30: 'Team Spirit',
+              31: 'Website',32: 'Autodesk Visualization',38: 'Leadership in Controls',
+              39: '#1 Seed',40: 'Incredible Play Award',43: 'Best Offensive Round',
+              47: 'Outstanding Defense',51: 'Chairmans Award Finalist',
+              68: 'Wildcard'}
+
 
 def maketeamlist(event):
     '''
@@ -114,6 +127,74 @@ def awdmtx(teamlist):
                            
             
     return allawds, awdkeys, awdmtx
+def teamweekmtx(teamdict):
+    '''(dict) -> dict
+    Take entries like 935: ['2018mokc2', '2018mokc'] and convert to
+    935: {2: '2018mokc2', 3: '2018mokc'}
+    '''
+    
+    junk, weeklist = make_eventweekmtx()
+    
+    result = {}
+    
+    for team in teamdict:
+        result[team] = {}
+        for week in weeklist:
+            for event in teamdict[team]:                
+                if event[4:] in weeklist[week]:                    
+                    result[team][week] = event
+    
+    #print('\nTeam Week Matrix?')
+    
+    return pd.DataFrame(result).transpose().fillna(value = '')
+    
+def wrestleawds(awdmatrix, awdkeys):
+    masterkeys = MASTERKEYS
+    #pprint(masterkeys)
+    
+    for i in awdkeys:
+        if i not in masterkeys:
+            print('Missing Award:', i, awdkeys[i])
+            masterkeys[i] = awdkeys[i][0]
+    
+    print('\nMaster Keys')
+    pprint(masterkeys)
+    currentyear = {}
+    allyears = {}
+    
+    for key in awdmatrix:
+        aname = masterkeys[key]
+        currentyear[aname] = {}
+        allyears[aname] = {}
+        
+        for team in awdmatrix[key]:
+            currentyear[aname][team] = []
+            allyears[aname][team] = []
+            
+            for award in awdmatrix[key][team]:
+                if award[0:4] == YEAR:
+                    currentyear[aname][team].append(award)
+                allyears[aname][team].append(award)
+
+            if len(currentyear[aname][team]) == 0:
+                del currentyear[aname][team]
+        if len(currentyear[aname]) == 0:
+            del currentyear[aname]
+        if len(allyears[aname]) == 0:
+            del allyears[aname]
+
+    print()
+    #print('All')
+    #pprint(allyears)
+
+    currentyeardf = pd.DataFrame(currentyear)
+    allyearsdf = pd.DataFrame(allyears)
+    
+    return currentyeardf, allyearsdf
+            
+   
+    
+    
     
 def prescout_event(event):
     '''
@@ -140,18 +221,25 @@ def prescout_event(event):
         file.write('\n\nAward Keys\n')
         file.write(str(awdkeys))
    
-    awdmtxdf = pd.DataFrame(awdmx)
-    pprint(current)        
-    
+    print('\nKeys')
     pprint(awdkeys)
-
-    print()    
-    teamdf = pd.DataFrame(teamlist)
-    #currdf = pd.DataFrame(current)
-    #awdkeydf = pd.DataFrame(awdkeys)
+  
+    pprint(locations)
     
+    curmtx = teamweekmtx(current)    
+    teamdf = pd.DataFrame(teamlist).transpose()
     
+    #pprint(awdmx)
+    
+    curawddf, awdmtxdf = wrestleawds(awdmx, awdkeys)
+    
+    #print(awdmtxdf.head())
     
     with pd.ExcelWriter(xlfile) as writer:
-        awdmtxdf.to_excel(writer, 'Award Matrix')
-        teamdf.to_excel(writer, 'Team List', index=False)
+        teamdf.to_excel(writer, 'Team List')
+        curmtx.to_excel(writer, 'Team Schedule')
+        curawddf.to_excel(writer, 'Current Awards')
+        awdmtxdf.to_excel(writer, 'Full Award Matrix')
+        
+        
+    
