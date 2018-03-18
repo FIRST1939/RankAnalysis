@@ -30,10 +30,24 @@ MASTERKEYS = {0: 'RCA/CCA',1: 'Winner',2: 'Finalist',3: 'WFFA/WFA',4: 'DLFA',
               21: 'Excellence in Engineering',22: 'Entrepreneurship',
               23: 'Autodesk Excellence in Design',26: 'Delphi Driving Tomorrows Technology',
               27: 'Imagery',29: 'Innovation in Control',30: 'Team Spirit',
-              31: 'Website',32: 'Autodesk Visualization',38: 'Leadership in Controls',
+              31: 'Website',32: 'Autodesk Visualization',
+              34: 'FIRST Future Innovator', 38: 'Leadership in Controls',
               39: '#1 Seed',40: 'Incredible Play Award',43: 'Best Offensive Round',
               47: 'Outstanding Defense',51: 'Chairmans Award Finalist',
               68: 'Wildcard'}
+              
+AWDSEQ = ['RCA/CCA', 'Chairmans Award Finalist', 'REI/EI', 'Winner', 'Finalist',
+          'Wildcard', 'Excellence in Engineering', 'GM Industrial Design', 
+          'Innovation in Control', 'Quality', 'Creativity', 
+          'WFFA/WFA', 'DLFA', 'Volunteer of the Year', 'FIRST Future Innovator',
+          'Entrepreneurship',
+          'Gracious Professionalism', 'Team Spirit', 'Imagery', 'Judges', 'Safety',
+          'Rookie All-Star', 'Highest Rookie Seed', 'Rookie Inspiration',
+          'Coopertition', 'Sportsmanship', 'Autodesk Excellence in Design',
+          'Delphi Driving Tomorrows Technology', 'Website',
+          'Autodesk Visualization', 'Leadership in Controls',
+          '#1 Seed', 'Incredible Play Award',
+          'Best Offensive Round', 'Outstanding Defense']
 
 
 def maketeamlist(event):
@@ -152,13 +166,14 @@ def wrestleawds(awdmatrix, awdkeys):
     masterkeys = MASTERKEYS
     #pprint(masterkeys)
     
+    print()
     for i in awdkeys:
         if i not in masterkeys:
             print('Missing Award:', i, awdkeys[i])
             masterkeys[i] = awdkeys[i][0]
     
-    print('\nMaster Keys')
-    pprint(masterkeys)
+    #print('\nMaster Keys')
+    #pprint(masterkeys)
     currentyear = {}
     allyears = {}
     
@@ -192,8 +207,53 @@ def wrestleawds(awdmatrix, awdkeys):
     
     return currentyeardf, allyearsdf
             
-   
+def awdcounter(awdmtxdf):
+    '''
+    Take the award matrix and do a count by team by award.
+    Also do a count by team by award for the most recent 4 years (i.e. the
+    window in which the same student might have been on the team Freshman to 
+    Senior)
+    '''
+    tgtyears = [YEAR, str(int(YEAR)-1), str(int(YEAR)-2), str(int(YEAR)-3)]
     
+    awdmtxdf.fillna(value='0', inplace=True)    
+    print(awdmtxdf.head())
+    
+    mtx = awdmtxdf.to_dict()
+    
+    pprint(mtx)
+    
+    allcnt = {}
+    past4 = {}
+    
+    for awd in mtx:
+        allcnt[awd] = {}
+        past4[awd] = {}
+        for team in mtx[awd]:
+            if mtx[awd][team] == '0':
+                allcnt[awd][team] = 0
+                past4[awd][team] = 0
+            else:
+                print(team)
+                for item in mtx[awd][team]:
+                    print(item)
+                    if team not in past4[awd]:
+                        allcnt[awd][team] = 0
+                        past4[awd][team] = 0
+                    year = item[0:4]
+                    if year in tgtyears:
+                        past4[awd][team] += 1
+                    allcnt[awd][team] += 1
+                    
+                    print(past4[awd][team], allcnt[awd][team])
+
+    past4df = pd.DataFrame(past4)
+    allcntdf = pd.DataFrame(allcnt)
+                        
+    print(past4df.head())
+    
+
+    return past4df, allcntdf    
     
     
 def prescout_event(event):
@@ -221,9 +281,10 @@ def prescout_event(event):
         file.write('\n\nAward Keys\n')
         file.write(str(awdkeys))
    
-    print('\nKeys')
-    pprint(awdkeys)
+    #print('\nKeys')
+    #pprint(awdkeys)
   
+    print('Team locations:')
     pprint(locations)
     
     curmtx = teamweekmtx(current)    
@@ -233,6 +294,8 @@ def prescout_event(event):
     
     curawddf, awdmtxdf = wrestleawds(awdmx, awdkeys)
     
+    past4cntdf, allawdcntdf = awdcounter(awdmtxdf)
+    
     #print(awdmtxdf.head())
     
     with pd.ExcelWriter(xlfile) as writer:
@@ -240,6 +303,8 @@ def prescout_event(event):
         curmtx.to_excel(writer, 'Team Schedule')
         curawddf.to_excel(writer, 'Current Awards')
         awdmtxdf.to_excel(writer, 'Full Award Matrix')
+        past4cntdf.to_excel(writer, 'Awd Count Current Team')
+        allawdcntdf.to_excel(writer, 'All Award Count')
         
         
     
