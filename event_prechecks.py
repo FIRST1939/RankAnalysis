@@ -216,12 +216,9 @@ def awdcounter(awdmtxdf):
     '''
     tgtyears = [YEAR, str(int(YEAR)-1), str(int(YEAR)-2), str(int(YEAR)-3)]
     
-    awdmtxdf.fillna(value='0', inplace=True)    
-    print(awdmtxdf.head())
+    awdmtxdf.fillna(value='0', inplace=True)        
     
-    mtx = awdmtxdf.to_dict()
-    
-    pprint(mtx)
+    mtx = awdmtxdf.to_dict()    
     
     allcnt = {}
     past4 = {}
@@ -233,26 +230,19 @@ def awdcounter(awdmtxdf):
             if mtx[awd][team] == '0':
                 allcnt[awd][team] = 0
                 past4[awd][team] = 0
-            else:
-                print(team)
-                for item in mtx[awd][team]:
-                    print(item)
+            else:               
+                for item in mtx[awd][team]:                   
                     if team not in past4[awd]:
                         allcnt[awd][team] = 0
                         past4[awd][team] = 0
                     year = item[0:4]
                     if year in tgtyears:
                         past4[awd][team] += 1
-                    allcnt[awd][team] += 1
-                    
-                    print(past4[awd][team], allcnt[awd][team])
+                    allcnt[awd][team] += 1                                        
 
     past4df = pd.DataFrame(past4)
     allcntdf = pd.DataFrame(allcnt)
-                        
-    print(past4df.head())
-    
-
+                                
     return past4df, allcntdf    
     
     
