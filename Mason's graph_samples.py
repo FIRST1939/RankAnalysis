@@ -1,4 +1,4 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ww# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Graph samples
 
@@ -9,17 +9,29 @@ Created on Thu Aug 15 17:26:20 2019
 To use, repoint the filename variable to a 2019 matchScoutData excel file.
 """
 
-filename = r'C:\Users\stat\Documents\FRC\2019\matchScoutData-CMO.xlsx'
+from tkinter import filedialog
+
+filename = filedialog.askopenfilename(title = 'select analyzed data file')
 
 import pandas as pd
 import matplotlib.pyplot as plt
 
 df = pd.read_excel(filename)
 
-print(df.columns)
+
+#print(df.columns)
 
 print('Maximum scored objects in a match', df.totalscored.max())
 
+print('This program will generate a histogram with two subplots. \n The first graph will create a file that with the average total points scored. \n The second will generate a cargo scored graph. \n The third will generate a hatch scored graph.')
+print('If you would like to generate the other two as sandstorm cargo and hatch graphs enter 1')
+print('If you would like to generate the other two as tele cargo and hatch graphs enter anything but 1')
+selection = input('Your selection here:')
+
+if selection == '1':
+    selection = 'sand'
+else:
+    selection = 'tele'
 
 def basicHist(df):
     '''
@@ -31,7 +43,7 @@ def basicHist(df):
     Since the values are all integers, the lower bound of the bin is the value
     counted for that bar.
     '''
-    plt.hist(df.totalscored)
+    plt.hist(df.sandhatch)
     
     plt.show()
 
@@ -50,7 +62,7 @@ def cleanBasicHist(df):
     
     plt.show()
     
-def complexSubplots(df):    
+def complexSubplots(df, selection):    
     '''
     For this, I took the same graph settings and made subplots showing total
     objects scored, teleop cargo scored, and teleop hatch panels scored in a 
@@ -62,14 +74,38 @@ def complexSubplots(df):
     plt.hist(df.totalscored,color="blue",bins = [0,1,2,3,4,5,6,7,8,9,10],
              align = 'left',rwidth=0.5, density = True)
     plt.ylabel('Total Objects')
-    plt.subplot(312)
-    plt.hist(df.telecargo, color="green",bins = [0,1,2,3,4,5,6,7,8,9,10],
-             align = 'left',rwidth=0.5, density = True)
-    plt.ylabel('Cargo')
-    plt.subplot(313)
-    plt.hist(df.telehatch, color="red",bins = [0,1,2,3,4,5,6,7,8,9,10],
-             align = 'left',rwidth=0.5, density = True)
-    plt.ylabel('HP')
     
+    if selection == 'tele':
+        plt.subplot(312)
+        plt.hist(df.telecargo, color="green",bins = [0,1,2,3,4,5,6,7,8,9,10],
+                 align = 'left',rwidth=0.5, density = True)
+        plt.ylabel('Cargo')
+        plt.subplot(313)
+        plt.hist(df.telehatch, color="red",bins = [0,1,2,3,4,5,6,7,8,9,10],
+                 align = 'left',rwidth=0.5, density = True)
+        plt.ylabel('HP')
+
+    else:
+        plt.subplot(312)
+        plt.hist(df.sandcargo, color="green",bins = [0,1,2,3,4,5,6,7,8,9,10],
+                 align = 'left',rwidth=0.5, density = True)
+        plt.ylabel('Cargo')
+        plt.subplot(313)
+        plt.hist(df.sandhatch, color="red",bins = [0,1,2,3,4,5,6,7,8,9,10],
+                 align = 'left',rwidth=0.5, density = True)
+        plt.ylabel('HP')        
     plt.show()
 
+
+def basicBar(df):
+    plt.bar(df.teamNUM,df.totalscored, label="Example two", color='g')
+    plt.legend()
+    plt.xlabel('Team #')
+    plt.ylabel('Total scored')
+    plt.title('')
+    plt.show()
+    print(df.teamNUM)
+
+
+complexSubplots(df, selection)
+basicBar(df)
