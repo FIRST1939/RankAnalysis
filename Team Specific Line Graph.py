@@ -6,11 +6,13 @@ Created on Tue Aug 27 21:11:11 2019
 """
 
 import pandas as pd
+
 from tkinter import filedialog
 import matplotlib.pyplot as plt
+team = int(input('Enter Which Team you want to generate a graph for:'))
 
 df = pd.read_csv(filedialog.askopenfilename(title = 'select MatchList file'), sep = '|')
 df.set_index("teamNo", inplace = True)
-print(df.loc[[1939], ["matchNo"]])
-plt.plot(df.loc[[1939], ["matchNo"]], df.loc[[1939], ["teleCargoCargo"]])
+print(df.loc[[team], ["matchNo"]])
+plt.plot(df.loc[[team], ["matchNo"]], df.loc[[team], ["teleCargoCargo"]])
 plt.show()
