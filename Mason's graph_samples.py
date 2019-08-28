@@ -47,6 +47,35 @@ def basicHist(df):
     
     plt.show()
 
+
+def teamNumHist(df):
+    '''
+    This function will plot a basic histogram using default settings of the
+    total game objects scored.
+    
+    Each bar will show the count of the number of data values in the bin.
+    
+    Since the values are all integers, the lower bound of the bin is the value
+    counted for that bar.
+    '''
+    plt.hist(df.team)
+    
+    plt.show()
+
+def funHist(df):
+    '''
+    This function will plot a basic histogram using default settings of the
+    total game objects scored.
+    
+    Each bar will show the count of the number of data values in the bin.
+    
+    Since the values are all integers, the lower bound of the bin is the value
+    counted for that bar.
+    '''
+    plt.hist(df.teledropCargo)
+    
+    plt.show()
+    
 def cleanBasicHist(df):
     '''
     This is the same data as basicHist, but the color is explicitly specified.
@@ -98,14 +127,17 @@ def complexSubplots(df, selection):
 
 
 def basicBar(df):
-    plt.bar(df.teamNUM,df.totalscored, label="Example two", color='g')
+    plt.bar(df.team,df.totalscored, label="Example two", color='g')
     plt.legend()
     plt.xlabel('Team #')
     plt.ylabel('Total scored')
     plt.title('')
     plt.show()
-    print(df.teamNUM)
+    print(df.team)
 
 
 complexSubplots(df, selection)
 basicBar(df)
+teamNumHist(df)
+funHist(df)
+print(df.columns)
