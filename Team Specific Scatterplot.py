@@ -62,17 +62,17 @@ if selection == "0":
 
     plt.subplot(311)
     plt.title('Total Pieces')
-    plt.plot(df.loc[[team], ["matchNo"]], df.loc[[team], ["totalscored"]])
+    plt.scatter(df.loc[[team], ["matchNo"]], df.loc[[team], ["totalscored"]])
     plt.ylabel('Total Objects')
     
     plt.subplot(312)
 #    plt.title('Total Cargo')
-    plt.plot(df.loc[[team], ["matchNo"]], df.loc[[team], ["totalcargo"]], color="green")
+    plt.scatter(df.loc[[team], ["matchNo"]], df.loc[[team], ["totalcargo"]], color="green")
     plt.ylabel('Cargo')
 
     plt.subplot(313)
 #    plt.title('Total Hatch')
-    plt.plot(df.loc[[team], ["matchNo"]], df.loc[[team], ["totalhatch"]], color="red")
+    plt.scatter(df.loc[[team], ["matchNo"]], df.loc[[team], ["totalhatch"]], color="red")
     plt.ylabel('HP')
     
 if selection == "1":
@@ -81,17 +81,17 @@ if selection == "1":
 
     plt.subplot(311)
     plt.title('Total Sand')
-    plt.plot(df.loc[[team], ["matchNo"]], df.loc[[team], ["sandtotal"]])
+    plt.scatter(df.loc[[team], ["matchNo"]], df.loc[[team], ["sandtotal"]])
     plt.ylabel('Total Objects')
     
     plt.subplot(312)
 #    plt.title('Total Sand Cargo')
-    plt.plot(df.loc[[team], ["matchNo"]], df.loc[[team], ["sandcargo"]], color="green")
+    plt.scatter(df.loc[[team], ["matchNo"]], df.loc[[team], ["sandcargo"]], color="green")
     plt.ylabel('Cargo')
 
     plt.subplot(313)
 #    plt.title('Total Sand Hatch')
-    plt.plot(df.loc[[team], ["matchNo"]], df.loc[[team], ["sandhatch"]], color="red")
+    plt.scatter(df.loc[[team], ["matchNo"]], df.loc[[team], ["sandhatch"]], color="red")
     plt.ylabel('HP')
 
 if selection == "2":
@@ -100,16 +100,16 @@ if selection == "2":
 
     plt.subplot(311)
     plt.title('Total Tele Pieces')
-    plt.plot(df.loc[[team], ["matchNo"]], df.loc[[team], ["teletotal"]])
+    plt.scatter(df.loc[[team], ["matchNo"]], df.loc[[team], ["teletotal"]])
     plt.ylabel('Total Objects')
     
     plt.subplot(312)
 #    plt.title('Total Tele Cargo')
-    plt.plot(df.loc[[team], ["matchNo"]], df.loc[[team], ["telecargo"]], color="green")
+    plt.scatter(df.loc[[team], ["matchNo"]], df.loc[[team], ["telecargo"]], color="green")
     plt.ylabel('Cargo')
 
     plt.subplot(313)
 #    plt.title('Total Tele Hatch')
-    plt.plot(df.loc[[team], ["matchNo"]], df.loc[[team], ["telehatch"]], color="red")
+    plt.scatter(df.loc[[team], ["matchNo"]], df.loc[[team], ["telehatch"]], color="red")
     plt.ylabel('HP')
 
