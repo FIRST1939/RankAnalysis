@@ -18,6 +18,60 @@ def getArrayFromCSV(dfVar, df, team):
                        
     return newArray
 
+def heatMapWithAllBaseVars():    
+    for col in heatMapdf.columns:
+        yVars.append(col)
+    
+    for match in df.loc[[team], ["matchNo"]]:
+        matchNum.append(match)
+
+    for i in heatMapdf.columns:
+        heatMapList.append(getArrayFromCSV(i, heatMapdf, team))
+    
+
+
+def heatMapWithTotalVars():
+    piecesMath(df)
+    advdf = df.loc[[team], ['telecargo','sandcargo', 'telehatch', 'sandhatch', 'totalscored', 'teletotal', 'sandtotal', 'totalcargo', 'totalhatch' ]]
+#    print(advdf)
+    for col in advdf.columns:
+        yVars.append(col)
+        
+    for match in df.loc[[team], ["matchNo"]]:
+        matchNum.append(match)
+        
+    for i in advdf.columns:
+        heatMapList.append(getArrayFromCSV(i, advdf, team))
+    
+    
+    
+def piecesMath(TeamDf):
+    TeamDf['telecargo'] = TeamDf['teleCargoCargo'] + TeamDf['TeleCargoHRocketCargo'] 
+    TeamDf['telecargo'] += TeamDf['TeleCargoMRocketCargo'] 
+    TeamDf['telecargo'] += TeamDf['TeleCargoLRocketCargo']
+  
+    TeamDf['sandcargo'] = TeamDf['SSCargoCargo'] + TeamDf['SSCargoSSHRocketCargo']
+    TeamDf['sandcargo'] += TeamDf['SSCargoSSMRocketCargo']
+    TeamDf['sandcargo'] += TeamDf['SSCargoSSLRocketCargo']
+    
+    TeamDf['telehatch'] = TeamDf['teleCargoHatch'] + TeamDf['TeleHatchHRocketHatch']
+    TeamDf['telehatch'] += TeamDf['TeleHatchMRocketHatch']
+    TeamDf['telehatch'] += TeamDf['TeleHatchLRocketHatch']
+    
+    TeamDf['sandhatch'] = TeamDf['SSCargoHatch'] + TeamDf['SSCargoSSHRocketHatch']
+    TeamDf['sandhatch'] += TeamDf['SSCargoSSMRocketHatch']
+    TeamDf['sandhatch'] += TeamDf['SSCargoSSLRocketHatch']
+    
+    
+    
+    TeamDf['teletotal'] = TeamDf['telecargo'] + TeamDf['telehatch']
+    
+    TeamDf['sandtotal'] = TeamDf['sandcargo'] + TeamDf['sandhatch']
+    
+    TeamDf['totalcargo'] = TeamDf['telecargo'] + TeamDf['sandcargo']
+    
+    TeamDf['totalhatch'] = TeamDf['telehatch'] + TeamDf['sandhatch']
+
 df = pd.read_csv(filedialog.askopenfilename(title = 'select MatchList file'), sep = '|')
 df.set_index("teamNo", inplace = True)
 
@@ -33,20 +87,14 @@ heatMapList=[]
 matchNum = []        
 yVars = []
 
-for col in heatMapdf.columns:
-    yVars.append(col)
-    
-for match in df.loc[[team], ["matchNo"]]:
-    matchNum.append(match)
-
-for i in heatMapdf.columns:
-    heatMapList.append(getArrayFromCSV(i, heatMapdf, team))
 
 #print(heatMapdf)
-print(yVars)
+#print(yVars)
 #print(heatMapList)
 #print(heatMapList)
 #print(df.loc[[team], ["matchNo"]])
+#heatMapWithAllBaseVars()
+heatMapWithTotalVars()
 fig, ax = plt.subplots()
 im = ax.imshow(heatMapList)
 
@@ -56,16 +104,9 @@ ax.set_yticks(np.arange(len(yVars)))
 #print(farmers)
 ax.set_xticklabels(matchNum)
 ax.set_yticklabels(yVars)
-
+    
 plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
          rotation_mode="anchor")
-
-# Loop over data dimensions and create text annotations.
-for i in range(len(yVars)):
-    for j in range(len(matchNum)):
-        text = ax.text(j, i, heatMapList[i, j],
-                       ha="center", va="center", color="w")
-
 
 ax.set_title(team)
 fig.tight_layout()
