@@ -33,7 +33,7 @@ def heatMapWithAllBaseVars():
 def heatMapWithTotalVars():
     piecesMath(df)
     advdf = df.loc[[team], ['telecargo','sandcargo', 'telehatch', 'sandhatch', 'totalscored', 'teletotal', 'sandtotal', 'totalcargo', 'totalhatch' ]]
-#    print(advdf)
+#    print(df.loc[[team], ['totalscored']])
     for col in advdf.columns:
         yVars.append(col)
         
@@ -62,7 +62,9 @@ def piecesMath(TeamDf):
     TeamDf['sandhatch'] += TeamDf['SSCargoSSMRocketHatch']
     TeamDf['sandhatch'] += TeamDf['SSCargoSSLRocketHatch']
     
-    
+    TeamDf['totalscored'] = TeamDf['telecargo'] + TeamDf['sandcargo']
+    TeamDf['totalscored'] += TeamDf['telehatch']
+    TeamDf['totalscored'] += TeamDf['sandhatch']
     
     TeamDf['teletotal'] = TeamDf['telecargo'] + TeamDf['telehatch']
     
