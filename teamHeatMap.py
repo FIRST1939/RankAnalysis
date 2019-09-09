@@ -2,13 +2,14 @@
 """
 Created on Sat Sep  7 19:29:25 2019
 
-@author: Mason
+@author: bob the builder from starwars 
 """
 
-import numpy as  np
+import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from tkinter import filedialog
+import seaborn as sb
 
 
 def getArrayFromCSV(dfVar, df, team):
@@ -37,8 +38,9 @@ def heatMapWithTotalVars():
     for col in advdf.columns:
         yVars.append(col)
         
-    for match in df.loc[[team], ["matchNo"]]:
-        matchNum.append(match)
+    for match in df.loc[[team], ["matchNo"]].values:
+        print(match)
+        matchNum.append(match[0])
         
     for i in advdf.columns:
         heatMapList.append(getArrayFromCSV(i, advdf, team))
@@ -84,7 +86,7 @@ heatMapdf = df.drop(dropLS, axis = 1)
 #df.drop(labels=dropLS)
 print(df.drop(dropLS, axis=1))
 
-team = 1939
+team = int(input('Enter Which Team you want to heatmap a graph for:'))
 heatMapList=[]
 matchNum = []        
 yVars = []
@@ -97,19 +99,21 @@ yVars = []
 #print(df.loc[[team], ["matchNo"]])
 #heatMapWithAllBaseVars()
 heatMapWithTotalVars()
-fig, ax = plt.subplots()
-im = ax.imshow(heatMapList)
-
-ax.set_xticks(np.arange(len(matchNum)))
-ax.set_yticks(np.arange(len(yVars)))
-# ... and label them with the respective list entries
-#print(farmers)
-ax.set_xticklabels(matchNum)
-ax.set_yticklabels(yVars)
-    
-plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-         rotation_mode="anchor")
-
-ax.set_title(team)
-fig.tight_layout()
+#fig, ax = plt.subplots()
+#im = ax.imshow(heatMapList)
+#
+#ax.set_xticks(np.arange(len(matchNum)))
+#ax.set_yticks(np.arange(len(yVars)))
+## ... and label them with the respective list entries
+##print(farmers)
+#ax.set_xticklabels(matchNum)
+#ax.set_yticklabels(yVars)
+#    
+#plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+#         rotation_mode="anchor")
+#
+#ax.set_title(team)
+#fig.tight_layout()
+heat_map = sb.heatmap(heatMapList, cmap="Greens" , annot=True, yticklabels=yVars, xticklabels=matchNum)
+#cmap ="cubehelix"
 plt.show()
