@@ -34,18 +34,26 @@ def heatMapWithAllBaseVars():
         
         
 def picklistHeatmap():
+#    for col in df.columns:
+#        yVars.append(col)
+#    
+#    for teams in df['team']:
+#        matchNum.append(teams[0])
+#        
+#    for i  in df.columns:
+#        heatMapList.append(df[i])
     avgDf =TeamStats(heatMapdf)
-    avgDf.set_index("team", inplace = True)
-    
+    avgDf.set_index('team', inplace = True)
+#    
     for col in avgDf.columns:
         yVars.append(col)
     
-    for teams in TeamStats(heatMapdf)['team']:
+    for teams in TeamStats(df)['team']:
         matchNum.append(avgDf['team'][0])
 
     for i in TeamStats(avgDf).columns:
-        heatMapList.append(getArrayFromCSV(i, avgDf, team))
-    
+        heatMapList.append(avgDf[i])
+#    
 
 
 def heatMapWithTotalVars():
@@ -70,6 +78,8 @@ def TeamStats(TeamDf):
     # Normalize column names
     # Database renamed match and team to matchNo and teamNo.  We put back.
     TeamDf.rename(columns = {'teamNo':'team', 'matchNo': 'match'}, inplace = True)
+    
+    TeamDf.set_index('team', inplace=True)
     
     # Calculate cube usage
     TeamDf['telecargo'] = TeamDf['teleCargoCargo'] + TeamDf['TeleCargoHRocketCargo'] 
