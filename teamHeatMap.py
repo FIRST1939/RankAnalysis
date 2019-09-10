@@ -205,7 +205,10 @@ else:
     plt.figure(figsize=(50,3))
 #print(heatMapList)
 
-heat_map = sb.heatmap(heatMapList, cmap="YlGnBu", annot=True, yticklabels=yVars, xticklabels=matchNum)
+heat_map = sb.heatmap(heatMapList, cmap="YlGn", annot=True, yticklabels=yVars, xticklabels=matchNum)
 #cmap ="cubehelix"
-
+#if selection == 0:
+#    heat_map.savefig('C:\\Users\\Mason\\Desktop' +str(team) + 'heatmap.png'.format(dir))
+#else:
+#    plt.savefig('pickListHeatMap' + date.today() + '.png')
 plt.show()
