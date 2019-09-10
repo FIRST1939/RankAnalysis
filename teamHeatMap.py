@@ -34,26 +34,27 @@ def heatMapWithAllBaseVars():
         
         
 def picklistHeatmap():
-#    for col in df.columns:
-#        yVars.append(col)
-#    
-#    for teams in df['team']:
-#        matchNum.append(teams[0])
-#        
-#    for i  in df.columns:
-#        heatMapList.append(df[i])
-    avgDf =TeamStats(heatMapdf)
-    avgDf.set_index('team', inplace = True)
-#    
-    for col in avgDf.columns:
+#    print(df.columns)
+    for col in heatMapdf.columns:
         yVars.append(col)
     
-    for teams in TeamStats(df)['team']:
-        matchNum.append(avgDf['team'][0])
-
-    for i in TeamStats(avgDf).columns:
-        heatMapList.append(avgDf[i])
+    for teams in df['team']:
+        matchNum.append(teams)
+        
+    for i  in heatMapdf.columns:
+        heatMapList.append(df[i])
+#    avgDf =TeamStats(heatMapdf)
+#    avgDf.set_index('team', inplace = True)
+##    
+#    for col in avgDf.columns:
+#        yVars.append(col)
 #    
+#    for teams in TeamStats(df)['team']:
+#        matchNum.append(avgDf['team'][0])
+#
+#    for i in TeamStats(avgDf).columns:
+#        heatMapList.append(avgDf[i])
+##    
 
 
 def heatMapWithTotalVars():
@@ -170,14 +171,13 @@ def piecesMath(TeamDf):
     
     TeamDf['totalhatch'] = TeamDf['telehatch'] + TeamDf['sandhatch']
 
-df = pd.read_csv(filedialog.askopenfilename(title = 'select MatchList file'), sep = '|')
-teamList = df['teamNo'].drop_duplicates()
-df.set_index("teamNo", inplace = True)
-print(df.columns)
+#df = pd.read_csv(filedialog.askopenfilename(title = 'select MatchList file'), sep = ',')
+#teamList = df['teamNo'].drop_duplicates()
+#df.set_index("teamNo", inplace = True)
+#print(df.columns)
 
-dropLS = ['id', 'teamNUM', 'matchNo', 'startPOS', 'startLeft', 'Comments', 'scoutName', 'startRight']
 
-heatMapdf = df.drop(dropLS, axis = 1)
+
 #df.drop(labels=dropLS)
 #print(df.drop(dropLS, axis=1))
 selection = input('Enter 0 to generate a team heatmap, enter anything else to generate picklist heatmap:')
@@ -191,10 +191,18 @@ yVars = []
 
 #heatMapWithAllBaseVars()
 if selection == '0':
-   heatMapWithTotalVars()
+    dropLS = ['id', 'teamNUM', 'matchNo', 'startPOS', 'startLeft', 'Comments', 'scoutName', 'startRight']
+    df = pd.read_csv(filedialog.askopenfilename(title = 'select data file'), sep = '|')
+    heatMapdf = df.drop(dropLS, axis = 1)
+    df.set_index("teamNo", inplace = True)
+    heatMapWithTotalVars()
+   
 else:
+    dropLS = ['team', '(0, 0, 0)', '(0, 0, 1)', '(0, 1, 0)', '(1, 0, 0)', '(1, 0, 1)', '(1, 1, 0)', 'totalmatches']
+    df = pd.read_csv(filedialog.askopenfilename(title = 'select analyzed data file'), sep = ',')
+    heatMapdf = df.drop(dropLS, axis = 1)
     picklistHeatmap()
-print(heatMapList)
+#print(heatMapList)
 
 heat_map = sb.heatmap(heatMapList, cmap="YlGnBu", annot=True, yticklabels=yVars, xticklabels=matchNum)
 #cmap ="cubehelix"
