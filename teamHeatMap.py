@@ -202,8 +202,10 @@ else:
     df = pd.read_csv(filedialog.askopenfilename(title = 'select analyzed data file'), sep = ',')
     heatMapdf = df.drop(dropLS, axis = 1)
     picklistHeatmap()
+    plt.figure(figsize=(50,3))
 #print(heatMapList)
 
 heat_map = sb.heatmap(heatMapList, cmap="YlGnBu", annot=True, yticklabels=yVars, xticklabels=matchNum)
 #cmap ="cubehelix"
+
 plt.show()
