@@ -35,6 +35,8 @@ def heatMapWithAllBaseVars():
         
 def picklistHeatmap():
 #    print(df.columns)
+#    heatMapdf['avgScored'] = (heatMapdf['telecargo']*3)
+#    heatMapdf['avgScored'] += (heatMapdf['sandcargo']*3 + heatMapdf['sandhatch']*5 + heatMapdf['telehatch']*2)
     for col in heatMapdf.columns:
         yVars.append(col)
     
@@ -43,17 +45,7 @@ def picklistHeatmap():
         
     for i  in heatMapdf.columns:
         heatMapList.append(df[i])
-#    avgDf =TeamStats(heatMapdf)
-#    avgDf.set_index('team', inplace = True)
-##    
-#    for col in avgDf.columns:
-#        yVars.append(col)
-#    
-#    for teams in TeamStats(df)['team']:
-#        matchNum.append(avgDf['team'][0])
-#
-#    for i in TeamStats(avgDf).columns:
-#        heatMapList.append(avgDf[i])
+
 ##    
 
 
@@ -133,6 +125,7 @@ def TeamStats(TeamDf):
     
     TeamPivot = pd.merge(TeamPivot, climbDf, on = 'team')
     
+    
     TeamPivot.rename(columns = {"Did not Try": 'noAttempt', "Attempt Level One Climb": 'attemptLvl1', 
                                 "Climbed Level One": 'reachLvl1', "Attempt Level Two Climb": 'attemptLvl2',
                                 "Climbed Level Two": 'reachLvl2', "Attempt Level Three Climb": 'attemptLvl3',
@@ -159,10 +152,6 @@ def piecesMath(TeamDf):
     TeamDf['sandhatch'] += TeamDf['SSCargoSSMRocketHatch']
     TeamDf['sandhatch'] += TeamDf['SSCargoSSLRocketHatch']
     
-    TeamDf['totalscored'] = TeamDf['telecargo'] + TeamDf['sandcargo']
-    TeamDf['totalscored'] += TeamDf['telehatch']
-    TeamDf['totalscored'] += TeamDf['sandhatch']
-    
     TeamDf['teletotal'] = TeamDf['telecargo'] + TeamDf['telehatch']
     
     TeamDf['sandtotal'] = TeamDf['sandcargo'] + TeamDf['sandhatch']
@@ -170,16 +159,13 @@ def piecesMath(TeamDf):
     TeamDf['totalcargo'] = TeamDf['telecargo'] + TeamDf['sandcargo']
     
     TeamDf['totalhatch'] = TeamDf['telehatch'] + TeamDf['sandhatch']
-
-#df = pd.read_csv(filedialog.askopenfilename(title = 'select MatchList file'), sep = ',')
-#teamList = df['teamNo'].drop_duplicates()
-#df.set_index("teamNo", inplace = True)
-#print(df.columns)
-
+    
+    TeamDf['totalscored'] = TeamDf['telecargo'] + TeamDf['sandcargo']
+    TeamDf['totalscored'] += TeamDf['telehatch']
+    TeamDf['totalscored'] += TeamDf['sandhatch']
 
 
-#df.drop(labels=dropLS)
-#print(df.drop(dropLS, axis=1))
+
 selection = input('Enter 0 to generate a team heatmap, enter anything else to generate picklist heatmap:')
 if selection == '0':    
     team = int(input('Enter Which Team you want to heatmap a graph for:'))
@@ -188,8 +174,6 @@ matchNum = []
 yVars = []
 
 
-
-#heatMapWithAllBaseVars()
 if selection == '0':
     dropLS = ['id', 'teamNUM', 'matchNo', 'startPOS', 'startLeft', 'Comments', 'scoutName', 'startRight']
     df = pd.read_csv(filedialog.askopenfilename(title = 'select data file'), sep = '|')
@@ -198,17 +182,23 @@ if selection == '0':
     heatMapWithTotalVars()
    
 else:
-    dropLS = ['team', '(0, 0, 0)', '(0, 0, 1)', '(0, 1, 0)', '(1, 0, 0)', '(1, 0, 1)', '(1, 1, 0)', 'totalmatches']
+    dropLS = ['team', '(0, 0, 0)', '(0, 0, 1)', '(0, 1, 0)', '(1, 0, 0)', '(1, 0, 1)', '(1, 1, 0)', 'totalmatches','Unnamed: 0']
     df = pd.read_csv(filedialog.askopenfilename(title = 'select analyzed data file'), sep = ',')
+    print(df.columns)
     heatMapdf = df.drop(dropLS, axis = 1)
     picklistHeatmap()
     plt.figure(figsize=(50,3))
-#print(heatMapList)
+
 
 heat_map = sb.heatmap(heatMapList, cmap="YlGn", annot=True, yticklabels=yVars, xticklabels=matchNum)
-#cmap ="cubehelix"
-#if selection == 0:
-#    heat_map.savefig('C:\\Users\\Mason\\Desktop' +str(team) + 'heatmap.png'.format(dir))
+
+
+plt.show()
+
+if selection == 0:
+    plt.savefig(r'C:\Users\Mason\Desktop\heatmap.pdf', dpi=300)
+#    plt.openfig('heatmap.fig')
+#    
+#    'C:\\Users\\Mason\\Desktop' +
 #else:
 #    plt.savefig('pickListHeatMap' + date.today() + '.png')
-plt.show()
