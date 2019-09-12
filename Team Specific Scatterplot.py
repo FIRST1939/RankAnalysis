@@ -74,6 +74,7 @@ if selection == "0":
 #    plt.title('Total Hatch')
     plt.scatter(df.loc[[team], ["matchNo"]], df.loc[[team], ["totalhatch"]], color="red")
     plt.ylabel('HP')
+#    plt.savefig(r'/Users/Mason/Desktop/heatmap.pdf')
     
 if selection == "1":
     plt.figure()

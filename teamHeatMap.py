@@ -191,14 +191,15 @@ else:
 
 
 heat_map = sb.heatmap(heatMapList, cmap="YlGn", annot=True, yticklabels=yVars, xticklabels=matchNum)
-
+savethatsSaved = heat_map.get_figure()
 
 plt.show()
 
-if selection == 0:
-    plt.savefig(r'C:\Users\Mason\Desktop\heatmap.pdf', dpi=300)
+if selection == '0':
+   savethatsSaved.savefig(r'/Users/Mason/Desktop/heatmap for ' + str(team) +'.pdf', bbox_inches='tight')
 #    plt.openfig('heatmap.fig')
 #    
 #    'C:\\Users\\Mason\\Desktop' +
-#else:
-#    plt.savefig('pickListHeatMap' + date.today() + '.png')
+else:
+    savethatsSaved.savefig(r'/Users/Mason/Desktop/heatmap picklist at ' + input('Enter which event you want to display in the file name here:') +'.pdf', bbox_inches='tight')
+    print('heatmap saved')
