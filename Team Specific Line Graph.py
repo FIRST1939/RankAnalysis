@@ -112,4 +112,4 @@ if selection == "2":
 #    plt.title('Total Tele Hatch')
     plt.plot(df.loc[[team], ["matchNo"]], df.loc[[team], ["telehatch"]], color="red")
     plt.ylabel('HP')
-
+plt.savefig(r'/Users/Mason/Desktop/Line Graphs' + team +'.pdf', bbox_inches='tight')
