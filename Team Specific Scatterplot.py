@@ -51,9 +51,6 @@ df.set_index("teamNo", inplace = True)
 piecesMath(df)
 
 print(df.loc[[team], ["matchNo"]])
-#print(df.loc[[team], ["totalscored"]])
-#print(df.loc[[team], ["totalCargo"]])
-#print(df.loc[[team], ["totalHatch"]])
 
 if selection == "0":
     plt.figure()
