@@ -82,7 +82,18 @@ def piecesMath(TeamDf):
     TeamDf['totalcargo'] = TeamDf['telecargo'] + TeamDf['sandcargo']
     
     TeamDf['totalhatch'] = TeamDf['telehatch'] + TeamDf['sandhatch']
-    
+
+def getTeamStats(teamStatsList, df, team):
+        print(str(team))
+        df.reset_index(inplace = True)
+        df.set_index('team', inplace=True)
+        teamStatsList.append(df.loc[[int(team)], ["telecargo","telehatch","totalscored","defense", "reachLvl2","reachLvl3"]].get_values()[0][0])
+        teamStatsList.append(df.loc[[int(team)], ["telecargo","telehatch","totalscored","defense", "reachLvl2","reachLvl3"]].get_values()[0][1])
+        teamStatsList.append(df.loc[[int(team)], ["telecargo","telehatch","totalscored","defense", "reachLvl2","reachLvl3"]].get_values()[0][2])
+        teamStatsList.append(df.loc[[int(team)], ["telecargo","telehatch","totalscored","defense", "reachLvl2","reachLvl3"]].get_values()[0][3])
+        teamStatsList.append(df.loc[[int(team)], ["telecargo","telehatch","totalscored","defense", "reachLvl2","reachLvl3"]].get_values()[0][4])
+        teamStatsList.append(df.loc[[int(team)], ["telecargo","telehatch","totalscored","defense", "reachLvl2","reachLvl3"]].get_values()[0][5])
+        print(teamStatsList)
 def readMatchList():    
     '''
     Read the Match List file created by makeMatchList.     
@@ -161,6 +172,14 @@ def MatchReport(MatchList, PivotDf, Scoutdf, TeamNumber):
     Take the scouting data, trim down to only partners and opponents.
     Create a report by match showing partners and opponents.
     '''
+    matchOverviewLs=[]
+    team1stats = []
+    team2stats=[]
+    team3stats=[]
+    team4stats=[]
+    team5stats=[]
+    team6stats=[]
+    matchesGenerated = 0    
     FileName = 'MatchReport.htm'
     with open(FileName, 'w') as File:
         File.write('<head>\n  <title>Pre-match scouting Report</title><br>\n')
@@ -203,6 +222,19 @@ def MatchReport(MatchList, PivotDf, Scoutdf, TeamNumber):
                 File.write('      <th>' + str(match['opponents']) + '</th>\n')
                 File.write('    </tr>\n')                
                 File.write('\n')
+#        print('alliance')
+#        print(match['alliance'])
+                if matchesGenerated == 0:
+                    matchOverviewLs.append('1939')
+                    for alli in match['allies']:
+                        matchOverviewLs.append(str(alli))
+                    for oppon in match['opponents']:
+                        matchOverviewLs.append(str(oppon))
+                        matchesGenerated +=1
+                print(match['allies'])
+                print(match['opponents'])
+        print('Match Overview Ls')
+        print(matchOverviewLs)
         File.write('</table>\n')
         File.write('</div>\n')
         #Printing reports for each forthcoming match
@@ -228,20 +260,20 @@ def MatchReport(MatchList, PivotDf, Scoutdf, TeamNumber):
                 
                 File.write('\n<h3>Allies</h3>\n')
                 for ally in match['allies']:
-                    print(match['allies'])
-                    print(ally)
+#                    print(match['allies'])
+#                    print(ally)
 #                    print(match['ally'])
                     SearchTeam(Scoutdf, PivotDf, ally, File)
                     File.write('\n')
-                    File.write('<p><img src="G:\\My Drive\\Team 1939 Shared Folder\\Scouting\\Robot Pics\\2019\\Arkansas\\' + str(ally) +'.jpg" style="width:500px;height:600px;"><p>')
+                    File.write('<p><img src="G:\\My Drive\\Team 1939 Shared Folder\\Scouting\\Robot Pics\\2019\\CTTD\\' + str(ally) +'.jpg" style="width:500px;height:600px;"><p>')
                     File.write('\n')
                 File.write('\n<h3>Opponents</h3>\n')
                 for oppo in match['opponents']:
-                    print(match['opponents'])
+#                    print(match['opponents'])
 #                    print(match['oppo'])
                     SearchTeam(Scoutdf, PivotDf, oppo, File)
                     File.write('\n')
-                    File.write('<p><img src="G:\\My Drive\\Team 1939 Shared Folder\\Scouting\\Robot Pics\\2019\\Arkansas\\' + str(oppo) +'.jpg" style="width:500px;height:600px;"><p>')
+                    File.write('<p><img src="G:\\My Drive\\Team 1939 Shared Folder\\Scouting\\Robot Pics\\2019\\CTTD\\' + str(oppo) +'.jpg" style="width:500px;height:600px;"><p>')
                     File.write('\n')
                 File.write('</div>\n')
 #                File.write('<p><img src="G:\\My Drive\\Copy of 2019 Pit Scouting (File responses)\\Robot pics\\3937.jpg"><p>')
@@ -252,6 +284,67 @@ def MatchReport(MatchList, PivotDf, Scoutdf, TeamNumber):
                     '''
                     
         File.write('</body>\n')    
+    matchOverviewDf = pd.read_csv(filedialog.askopenfilename(title = 'select analyzed data file'), sep = ',')   
+    getTeamStats(team1stats, matchOverviewDf, matchOverviewLs[0])
+    getTeamStats(team2stats, matchOverviewDf, matchOverviewLs[1])
+    getTeamStats(team3stats, matchOverviewDf, matchOverviewLs[2])
+    getTeamStats(team4stats, matchOverviewDf, matchOverviewLs[3])
+    getTeamStats(team5stats, matchOverviewDf, matchOverviewLs[4])
+    getTeamStats(team6stats, matchOverviewDf, matchOverviewLs[5])
+    newFileName = 'MatchOverview.htm'
+    with open(newFileName, 'w') as File:
+        File.write('<html>')
+        File.write('<head>')
+        File.write('<title>Pre Match Report</title>')
+        File.write('</head>')
+        File.write('<body>')
+        File.write('<h1>Match Overview</h1>')
+        File.write('<p>')
+        print(str(matchOverviewLs[0]))
+        File.write('<img src="G:\\My Drive\\Team 1939 Shared Folder\\Scouting\\Robot Pics\\2019\\cttd\\'+ str(matchOverviewLs[0])+'.jpg" alt="r1 pic" style="width:350px;height:400px;">')
+        File.write('<img src="G:\\My Drive\\Team 1939 Shared Folder\\Scouting\\Robot Pics\\2019\\cttd\\'+ str(matchOverviewLs[1])+'.jpg" alt="r2 pic" style="width:350px;height:400px;">')
+        File.write('<img src="G:\\My Drive\\Team 1939 Shared Folder\\Scouting\\Robot Pics\\2019\\cttd\\'+ str(matchOverviewLs[2])+'.jpg" alt="r3 pic" style="width:350px;height:400px;">')
+        File.write('</p>')
+        File.write('<p>')
+        File.write('<p> Team Number:'+ matchOverviewLs[0]+ '&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp; Team Number:'+ matchOverviewLs[1]+ '&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Team Number:'+ matchOverviewLs[2]+ ' </P>')
+        File.write('Average scored:' + str(team1stats[2]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Average Scored:' + str(team2stats[2]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Average Scored:' + str(team3stats[2]))
+        File.write('</p>')
+        File.write('<p>')
+        File.write('Defense Matches Played:' + str(team1stats[3]) + ' &nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Defense Matches Played:' + str(team2stats[3]) + ' &nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Defense Matches Played:' + str(team3stats[3]))
+        File.write('</p>')
+        File.write('<p>')
+        File.write('Level 3 Climbs:' + str(team1stats[5]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Level 3 Climbs:' + str(team2stats[5]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Level 3 Climbs:' + str(team3stats[5]))
+        File.write('</p>')
+        File.write('<p>')
+        File.write('Level 2 Climbs:' + str(team1stats[4]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Level 2 Climbs:' + str(team2stats[4]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Level 2 Climbs:' + str(team3stats[4]))
+        File.write('</p>')
+        File.write('<p>')
+        File.write('Prefered game piece: &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Prefered game piece: &emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Prefered game piece:')
+        File.write('</p>')
+                               
+        File.write('<p>')
+        File.write('<img src="G:\\My Drive\\Team 1939 Shared Folder\\Scouting\\Robot Pics\\2019\\cttd\\'+ str(matchOverviewLs[3])+'.jpg" alt="b1 pic" style="width:350px;height:400px;">')
+        File.write('<img src="G:\\My Drive\\Team 1939 Shared Folder\\Scouting\\Robot Pics\\2019\\cttd\\'+ str(matchOverviewLs[4])+'.jpg" alt="b2 pic" style="width:350px;height:400px;">')
+        File.write('<img src="G:\\My Drive\\Team 1939 Shared Folder\\Scouting\\Robot Pics\\2019\\cttd\\'+ str(matchOverviewLs[5])+'.jpg" alt="b3 pic" style="width:350px;height:400px;">')
+        File.write('</p>')
+        File.write('<p>')
+        File.write('<p> Team Number:'+ matchOverviewLs[3]+ ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp; Team Number:'+ matchOverviewLs[4]+ ' &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Team Number:'+ matchOverviewLs[5]+ ' </P>')
+        File.write('Average scored:' + str(team4stats[2]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Average Scored:' + str(team5stats[2]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Average Scored:' + str(team6stats[2]))
+        File.write('</p>')
+        File.write('<p>')
+        File.write('Defense Matches Played:' + str(team4stats[3]) + ' &nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Defense Matches Played:' + str(team5stats[3]) + ' &nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Defense Matches Played:' + str(team6stats[3]))
+        File.write('</p>')
+        File.write('<p>')
+        File.write('Level 3 Climbs:' + str(team4stats[5]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Level 3 Climbs:' + str(team5stats[5]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Level 3 Climbs:' + str(team6stats[5]))
+        File.write('</p>')
+        File.write('<p>')
+        File.write('Level 2 Climbs:' + str(team4stats[4]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Level 2 Climbs:' + str(team5stats[4]) + ' &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Level 2 Climbs:' + str(team6stats[4]))
+        File.write('</p>')
+        File.write('<p>')
+        File.write('Prefered game piece: &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Prefered game piece: &emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Prefered game piece:')
+        File.write('</p>')
+        File.write('</body>')
+        File.write('</html>')
         
 def Day1Report(Scoutdf, PivotDf):
     '''(dataframe)->None
@@ -363,7 +456,7 @@ def SearchTeam(Scoutdf, PivotDf, TeamNumber, File = None):
         File.write(Scoutdf[Scoutdf.team == TeamNumber].to_html(columns=['match', 'team', 'crossHABLine', 'defense', 'noAttempt', 'groundPickup', 'touchedRocketLate'], float_format='{0:.0f}'.format, index=False))
         File.write('\n<br>\n')
         
-\
+
                        
         
 def TeamStats(TeamDf):

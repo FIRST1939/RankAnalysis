@@ -9,8 +9,10 @@ from tkinter import *
 import pandas as pd
 from tkinter import filedialog
 from tkinter import ANCHOR
+from tkinter import StringVar
 
 picklist = [[],[],[],[],[]]
+index = StringVar
 
 def deleteFromListbox(lb):
     listList = lb.get(0,END)
@@ -21,7 +23,7 @@ def deleteFromListbox(lb):
 def getAndRemoveAnchor(lb):
     print(lb.get(ANCHOR))
     team = lb.get(ANCHOR)
-#    index.set(str(team))
+    self.index.set(value = lb.get(ANCHOR))
     picklist[4].append(int(team))
     if lb == totalbox:
         picklist[0].append(int(team))
