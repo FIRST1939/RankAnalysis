@@ -39,7 +39,7 @@ def piecesMath(TeamDf):
     TeamDf['totalscored'] += TeamDf['sandhatch']
 
 
-df = pd.read_csv(filedialog.askopenfilename(title = 'select MatchList file'), sep = '|')
+df = pd.read_csv(filedialog.askopenfilename(title = 'select unfiltered data file'), sep = '|')
 df = df.sort_values('teamNo', ascending=True)
 piecesMath(df)
 teamList = df['teamNo'].drop_duplicates()
@@ -74,8 +74,9 @@ ax = fig.add_subplot(111)
 bp = ax.boxplot(dataArr)
 ax.set_xticklabels(teamList.get_values())
 plt.grid(True, axis='x')
+plt.savefig('Big Boxplot Boi.pdf', bbox_inches='tight')
 plt.show()
-
+#plt.savefig('Big Boxplot Boi.png')
 
 #junk = [['tom', 10, 4161, 145, 14, 15, 4 ,15, 15, 14, 41, 51, 561, 41, 41516, 45, 6543, 552, 52, 2, 52, 52, 51, 1, 81557, 651, 41, 4151, 416516, 415163, 651032, 165032, 6513026, 1563, 5132, 41321, 6548, 561, 5332, 153648, 897465, 142, 48651, 1536, 6531, 5631, 32114, 1320, 3120, 
 #         465, 84651, 4115, 4651, 451, 4865, 48751, 21354, 31564]]
