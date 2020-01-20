@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ww# -*- coding: utf-8 -*-
 """
 Graph samples
 
