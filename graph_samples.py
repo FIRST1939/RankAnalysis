@@ -13,6 +13,7 @@ filename = r'C:\Users\stat\Documents\FRC\2019\matchScoutData-CMO.xlsx'
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 df = pd.read_excel(filename)
 
@@ -73,3 +74,29 @@ def complexSubplots(df):
     
     plt.show()
 
+def basicScatter(df):
+    '''
+    For this, we're going to look at hatches vs. cargo in each team/match
+    '''
+    
+    plt.scatter(df.telecargo, df.telehatch)
+    
+    plt.show()
+    
+def moredefScatter(df):
+    '''
+    Let's see if we can make it more obvious when we're overplotting the same point
+    '''
+    plt.scatter(df.telecargo, df.telehatch, alpha=.05, s=80)
+    plt.axis([-1,10,-1,10])
+    
+    plt.show()
+    
+def betterScatter(df):
+    
+    pointcountdf = pd.pivot_table(df, index=df.telecargo, columns=df.telehatch, aggfunc=np.count_nonzero)
+    print(pointcountdf)
+    
+    
+    plt.scatter(pointcountdf.index(), pointcountdf.columns(), s=pointcountdf.values())
+    plt.show()
