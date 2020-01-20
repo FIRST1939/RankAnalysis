@@ -12,10 +12,11 @@ import csv
 import os.path
 from time import sleep
 import pandas as pd
+from datetime import date
 
 URL = 'http://www.thebluealliance.com/api/v3/'
 
-THISYEAR = 2020
+THISYEAR = date.today().year
 
 '''
 X-TBA-App-Id is required by the blue alliance api for tracking
