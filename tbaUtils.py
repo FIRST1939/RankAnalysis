@@ -15,7 +15,7 @@ import pandas as pd
 
 URL = 'http://www.thebluealliance.com/api/v3/'
 
-THISYEAR = 2019
+THISYEAR = 2020
 
 '''
 X-TBA-App-Id is required by the blue alliance api for tracking
