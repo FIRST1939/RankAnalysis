@@ -20,7 +20,9 @@ import tbaUtils
 import pandas as pd
 from pprint import pprint
 
-YEAR = '2019'
+from datetime import date
+
+YEAR = str(date.today().year)
 
 MASTERKEYS = {0: 'RCA/CCA',1: 'Winner',2: 'Finalist',3: 'WFFA/WFA',4: 'DLFA',
               5: 'Volunteer of the Year',9: 'REI/EI',10: 'Rookie All-Star',
@@ -84,7 +86,7 @@ def maketeamlist(event):
     Pull big list, strip out the interesting parts, and return as a dict.
     '''
     
-    raw = get_event_teams(event)
+    raw = tbaUtils.get_event_teams(event)
     
     result = {}
     
@@ -127,7 +129,7 @@ def eventmtx(teamlist):
     
     
     for team in teamlist:
-        allevents[team] = get_team_history(team)
+        allevents[team] = tbaUtils.get_team_history(team)
         
         currentevents[team] = []
         
@@ -148,7 +150,7 @@ def awdmtx(teamlist):
     awdmtx = {}
     
     for team in teamlist:
-        allawds[team] = get_award_history(team)
+        allawds[team] = tbaUtils.get_award_history(team)
               
         for awddict in allawds[team]:
             
@@ -179,7 +181,7 @@ def teamweekmtx(teamdict):
     935: {2: '2018mokc2', 3: '2018mokc'}
     '''
     
-    junk, weeklist = make_eventweekmtx()
+    junk, weeklist = tbaUtils.make_eventweekmtx()
     
     result = {}
     
@@ -395,7 +397,7 @@ def makeEventList(year = YEAR):
     List event code, event name, competition level
     '''
     
-    eventlist = get_event_list(year)
+    eventlist = tbaUtils.get_event_list(year)
     
     result = []
     
