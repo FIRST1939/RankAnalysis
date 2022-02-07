@@ -345,6 +345,7 @@ def prescout_event(event):
     scratchfile = 'Prescout-' + YEAR + '-' + event + '-notes.txt'
 
     teamlist = maketeamlist(event)
+    ic(teamlist)
     locations = locstats(teamlist)
     current, fullhist = eventmtx(teamlist)
     allawds, awdkeys, awdmx = awdmtx(teamlist)
@@ -372,6 +373,8 @@ def prescout_event(event):
 
     curmtx = teamweekmtx(current)
     teamdf = pd.DataFrame(teamlist).transpose()
+    #covidRkdf = covidrookie(teamdf)
+    #ic(covidRkdf)
 
     eventteamdf = pd.merge(teamdf, curmtx, left_index=True, right_index=True)
     # pprint(awdmx)
@@ -407,6 +410,33 @@ def makeEventList(year=YEAR):
         result.append([key, level])
 
     return result
+
+
+def covidrookie(teamdf):
+    '''
+    Parameters:
+        teamdf: pdDataframe containing Team, Nickname, State
+
+    Returns:
+        coviddf: pd.Dataframe containing Team, 2020Events
+
+        2020Events is a boolean indicating whether the team attended a 2020 event that was not cancelled.
+    TODO:This thing doesn't work at all yet
+    '''
+    good2020 = ['2020arli', '2020award', '2020bcvi', '2020cadm', '2020cala', '2020caln', '2020cass', '2020cmpmi',
+                '2020cmptx', '2020ctnct', '2020ctwat', '2020facc', '2020gadal', '2020gagai', '2020gzrs', '2020ilch',
+                '2020inblo', '2020isde1', '2020isde2', '2020mabri', '2020mdbet', '2020mijac', '2020mike2', '2020miket',
+                '2020mikng', '2020mimcc', '2020mimil', '2020misjo', '2020misou', '2020mitvc', '2020mndu', '2020mndu2',
+                '2020mnwcw', '2020mokc', '2020mxmo', '2020ncpem', '2020ncwak', '2020ndgf', '2020nhgrs', '2020nyrra',
+                '2020ohmv', '2020onbar', '2020onosh', '2020onto3', '2020orore', '2020pahat', '2020qcsh', '2020scmb',
+                '2020srrc', '2020taiw', '2020taiw2', '2020tuis', '2020tuis2', '2020txcha', '2020txdel', '2020txdri',
+                '2020txgre', '2020txpla', '2020utwv', '2020vagle', '2020vahay', '2020wasno', '2020waspo', '2020week0',
+                '2020wiss']
+    ic(teamdf.head())
+    ic(tbaUtils.get_team_history('1706'))
+
+    teamdf[events] = tbaUtils.get_team_history(teamdf[team_num])
+    ic(teamdf.head())
 
 
 def eventLeveler(eventlist):
@@ -461,7 +491,7 @@ def cmpscout(cmp):
 
 
 def matchlistformo(event, year=YEAR):
-    matchdictlist = get_event_matches(event, year)
+    matchdictlist = tbaUtils.get_event_matches(event, year)
 
     qualteams = []
 
@@ -479,3 +509,8 @@ def matchlistformo(event, year=YEAR):
     qualdf = pd.DataFrame(qualteams, columns=['Match', 'Position', 'Team'])
 
     qualdf.to_excel('MO Matchlist - ' + event + '.xlsx', index=False)
+
+
+#thisevent = input('Enter event to check: ')
+#assert thisevent.isalnum()
+#prescout_event(thisevent)
