@@ -6,38 +6,34 @@ Created on Sun Mar  4 21:58:47 2018
 Event prescout with emphasis on past performance and interesting judging
 things.
 
-Fix list:
+TODO: Move master keys and sorted award list to an external file and import
+TODO: Replace diagnostic print statements with ic
+TODO: Refactor everything
 
-Fix the scratchfile write
-Make a week by week matrix of who is playing when this year
-Pull the Key Codex from the file
-Replace the award numbers with names from the codex
-Fix the excel write
-Who won what last year and write to teh excel
-Do a breakdown on the bad awards by level (CCA/RCA/DCA using the event codes)
+
 """
 import tbaUtils
 import pandas as pd
 from pprint import pprint
-
+from icecream import ic
 from datetime import date
 
 YEAR = str(date.today().year)
 
-MASTERKEYS = {0: 'RCA/CCA',1: 'Winner',2: 'Finalist',3: 'WFFA/WFA',4: 'DLFA',
-              5: 'Volunteer of the Year',9: 'REI/EI',10: 'Rookie All-Star',
-              11: 'Gracious Professionalism',12: 'Coopertition',13: 'Judges',
-              14: 'Highest Rookie Seed',15: 'Rookie Inspiration',16: 'GM Industrial Design',
-              17: 'Quality',18: 'Safety',19: 'Sportsmanship',20: 'Creativity',
-              21: 'Excellence in Engineering',22: 'Entrepreneurship',
+MASTERKEYS = {0: 'RCA/CCA', 1: 'Winner', 2: 'Finalist', 3: 'WFFA/WFA', 4: 'DLFA',
+              5: 'Volunteer of the Year', 9: 'REI/EI', 10: 'Rookie All-Star',
+              11: 'Gracious Professionalism', 12: 'Coopertition', 13: 'Judges',
+              14: 'Highest Rookie Seed', 15: 'Rookie Inspiration', 16: 'GM Industrial Design',
+              17: 'Quality', 18: 'Safety', 19: 'Sportsmanship', 20: 'Creativity',
+              21: 'Excellence in Engineering', 22: 'Entrepreneurship',
               23: 'Autodesk Excellence in Design', 24: 'Excellence in Design Award sponsored by Autodesk (3D CAD)',
-              25: 'Championship - Excellence in Design Award sponsored by Autodesk (Animation)', 
+              25: 'Championship - Excellence in Design Award sponsored by Autodesk (Animation)',
               26: 'Delphi Driving Tomorrows Technology',
               27: 'Imagery', 28: 'Media and Technology Award sponsored by Comcast',
-              29: 'Innovation in Control',30: 'Team Spirit',
-              31: 'Website',32: 'Autodesk Visualization', 33: 'Autodesk Inventor Award',
+              29: 'Innovation in Control', 30: 'Team Spirit',
+              31: 'Website', 32: 'Autodesk Visualization', 33: 'Autodesk Inventor Award',
               34: 'FIRST Future Innovator', 38: 'Leadership in Controls',
-              39: '#1 Seed',40: 'Incredible Play Award',41: "People's Choice Animation Award",
+              39: '#1 Seed', 40: 'Incredible Play Award', 41: "People's Choice Animation Award",
               42: 'Autodesk Rising Star Visualization Award', 43: 'Best Offensive Round',
               44: 'Best Play of the Day Award', 45: 'Featherweight in the Finals',
               46: 'Most Photogenic', 47: 'Outstanding Defense',
@@ -46,37 +42,37 @@ MASTERKEYS = {0: 'RCA/CCA',1: 'Winner',2: 'Finalist',3: 'WFFA/WFA',4: 'DLFA',
               54: 'Autodesk Award for Realization', 56: 'Autodesk Design your Future Award',
               57: 'Autodesk Design your Future Award Honorable Mentions:',
               58: 'Autodesk Special Recognition for Distinctive Work in the Area of Character Animation:',
-              59: 'High Score', 60: 'Teacher Pioneer Award', 
+              59: 'High Score', 60: 'Teacher Pioneer Award',
               61: 'Best Craftsmanship/Ultimate Keeper Award', 62: 'Best Defensive Match',
               64: 'Programming',
               65: 'Professionalism Award', 67: 'Most Improved Team', 68: 'Wildcard',
               69: "Chairman's Award Finalist", 70: 'Most Improved Robot',
               71: 'Autonomous Award sponsored by Ford'}
-              
+
 AWDSEQ = ['Chairman\'s Award Finalist', 'RCA/CCA', 'REI/EI', 'Winner', 'Finalist',
-          'Wildcard', 'Excellence in Engineering', 'GM Industrial Design', 
+          'Wildcard', 'Excellence in Engineering', 'GM Industrial Design',
           'Innovation in Control', 'Quality', 'Creativity',
           'Autonomous Award sponsored by Ford', 'Entrepreneurship',
           'Gracious Professionalism', 'Team Spirit', 'Imagery', 'Judges', 'Safety',
-          'Rookie All-Star', 'Rookie Inspiration', 'Highest Rookie Seed', 
+          'Rookie All-Star', 'Rookie Inspiration', 'Highest Rookie Seed',
           'WFFA/WFA', 'DLFA', 'Volunteer of the Year', 'FIRST Future Innovator',
-          'Coopertition', 'Sportsmanship', 'Professionalism Award', 
-          'Delphi Driving Tomorrows Technology', 
-          'Website', 'Leadership in Controls', '#1 Seed', 'High Score', 
-          'Incredible Play Award', 'Against All Odds Award', 
-          'Best Play of the Day Award', 'Best Offensive Round', 
+          'Coopertition', 'Sportsmanship', 'Professionalism Award',
+          'Delphi Driving Tomorrows Technology',
+          'Website', 'Leadership in Controls', '#1 Seed', 'High Score',
+          'Incredible Play Award', 'Against All Odds Award',
+          'Best Play of the Day Award', 'Best Offensive Round',
           'Best Defensive Match', 'Best Craftsmanship/Ultimate Keeper Award'
-          'Outstanding Defense', 'Featherweight in the Finals',
-          'Most Improved Team', 'Most Photogenic', 
-          'Programming', 'Most Improved Robot', 
+                                  'Outstanding Defense', 'Featherweight in the Finals',
+          'Most Improved Team', 'Most Photogenic',
+          'Programming', 'Most Improved Robot',
           'Media and Technology Award sponsored by Comcast',
-          'Teacher Pioneer Award',           
+          'Teacher Pioneer Award',
           'Delphi "Power to Simplify" Award',
           'Autodesk Excellence in Design',
           'Excellence in Design Award sponsored by Autodesk (3D CAD)',
-          'Autodesk Rising Star Visualization Award', 
-          'Autodesk Visualization', 'Autodesk Inventor Award', 
-          'Autodesk Award for Realization', 
+          'Autodesk Rising Star Visualization Award',
+          'Autodesk Visualization', 'Autodesk Inventor Award',
+          'Autodesk Award for Realization',
           'Autodesk Design your Future Award',
           'Autodesk Design your Future Award Honorable Mentions:']
 
@@ -85,11 +81,11 @@ def maketeamlist(event):
     '''
     Pull big list, strip out the interesting parts, and return as a dict.
     '''
-    
+
     raw = tbaUtils.get_event_teams(event)
-    
+
     result = {}
-    
+
     for entry in raw:
         teamnum = entry['team_number']
         name = entry['nickname']
@@ -98,128 +94,132 @@ def maketeamlist(event):
         else:
             state = entry['country']
         school = entry['name'].split('&')[-1]
-        
-        #print(teamnum, name, state, school)
-        result[teamnum] = {'name': name, 'state':state, 'school':school}
-        
-    return result        
+
+        # print(teamnum, name, state, school)
+        result[teamnum] = {'name': name, 'state': state, 'school': school}
+
+    return result
+
 
 def locstats(teamdict):
     '''
     Where are the teams from, generally speaking.
     '''
-    locgrid = {}    
-    
+    locgrid = {}
+
     for team in teamdict:
         state = teamdict[team]['state']
         if state not in locgrid:
             locgrid[state] = 0
-        
+
         locgrid[state] += 1
-        
+
     return locgrid
-    
+
+
 def eventmtx(teamlist):
     '''
     Take each team, get their event history (which includes this years).
     Make two dicts, one with everything, one with just this year.
     '''
     allevents = {}
-    currentevents = {}    
-    
-    
+    currentevents = {}
+
     for team in teamlist:
         allevents[team] = tbaUtils.get_team_history(team)
-        
+
         currentevents[team] = []
-        
+
         for event in allevents[team]:
             if YEAR in event:
                 currentevents[team].append(event)
-                
+
     return currentevents, allevents
-    
+
+
 def awdmtx(teamlist):
     '''
     Take each team, get their award history.
     '''
-    
+
     allawds = {}
-    
+
     awdkeys = {}
     awdmtx = {}
-    
+
     for team in teamlist:
         allawds[team] = tbaUtils.get_award_history(team)
-              
+
         for awddict in allawds[team]:
-            
+
             atype = awddict['award_type']
             aname = awddict['name']
             aevent = awddict['event_key']
-            
+
             # Make a matrix of all the type number to award name mappings
             if atype not in awdkeys:
                 awdkeys[atype] = []
             if aname not in awdkeys[atype]:
                 awdkeys[atype].append(aname)
-            
+
             # Make a matrix of award key to team to event mappings
             if atype not in awdmtx:
                 awdmtx[atype] = {}
-            
+
             if team not in awdmtx[atype]:
                 awdmtx[atype][team] = []
-            
+
             awdmtx[atype][team].append(aevent)
-                           
-            
+
     return allawds, awdkeys, awdmtx
+
+
 def teamweekmtx(teamdict):
     '''(dict) -> dict
     Take entries like 935: ['2018mokc2', '2018mokc'] and convert to
     935: {2: '2018mokc2', 3: '2018mokc'}
     '''
-    
+
     junk, weeklist = tbaUtils.make_eventweekmtx()
-    
+
     result = {}
-    
+
     for team in teamdict:
         result[team] = {}
         for week in weeklist:
-            for event in teamdict[team]:                
-                if event[4:] in weeklist[week]:                    
+            for event in teamdict[team]:
+                if event[4:] in weeklist[week]:
                     result[team][week] = event
-    
-    #print('\nTeam Week Matrix?')
-    
-    return pd.DataFrame(result).transpose().fillna(value = '')
-    
+
+    # print('\nTeam Week Matrix?')
+
+    return pd.DataFrame(result).transpose().fillna(value='')
+
+
 def wrestleawds(awdmatrix, awdkeys):
     masterkeys = MASTERKEYS
-    #pprint(masterkeys)
-    
+    # pprint(masterkeys)
+
     print()
     for i in awdkeys:
         if i not in masterkeys:
             print('Missing Award:', i, awdkeys[i])
             masterkeys[i] = awdkeys[i][0]
-    
-    #print('\nMaster Keys')
-    #pprint(masterkeys)
+
+    # print('\nMaster Keys')
+    # pprint(masterkeys)
     currentyear = {}
     allyears = {}
-    
+
     for key in awdmatrix:
         aname = masterkeys[key]
         currentyear[aname] = {}
         allyears[aname] = {}
-        
+
         for team in awdmatrix[key]:
             currentyear[aname][team] = []
             allyears[aname][team] = []
-            
+
             for award in awdmatrix[key][team]:
                 if award[0:4] == YEAR:
                     currentyear[aname][team].append(award)
@@ -233,31 +233,32 @@ def wrestleawds(awdmatrix, awdkeys):
             del allyears[aname]
 
     print()
-    #print('All')
-    #pprint(allyears)
+    # print('All')
+    # pprint(allyears)
 
     currentyeardf = pd.DataFrame(currentyear)
     allyearsdf = pd.DataFrame(allyears)
-    
-    #resequence this mess
+
+    # resequence this mess
     actuals = currentyeardf.columns.tolist()
     possibles = AWDSEQ.copy()
 
     for item in AWDSEQ:
         if item not in actuals:
-            possibles.remove(item)    
+            possibles.remove(item)
 
     currentyeardf = currentyeardf[possibles]
 
-    actuals2 = allyearsdf.columns.tolist()    
+    actuals2 = allyearsdf.columns.tolist()
     possibles2 = AWDSEQ.copy()
     for item in AWDSEQ:
         if item not in actuals2:
             possibles2.remove(item)
     allyearsdf = allyearsdf[possibles2]
-    
+
     return currentyeardf, allyearsdf
-            
+
+
 def awdcounter(awdmtxdf):
     '''
     Take the award matrix and do a count by team by award.
@@ -265,15 +266,15 @@ def awdcounter(awdmtxdf):
     window in which the same student might have been on the team Freshman to 
     Senior)
     '''
-    tgtyears = [YEAR, str(int(YEAR)-1), str(int(YEAR)-2), str(int(YEAR)-3)]
-    
-    awdmtxdf.fillna(value='0', inplace=True)        
-    
-    mtx = awdmtxdf.to_dict()    
-    
+    tgtyears = [YEAR, str(int(YEAR) - 1), str(int(YEAR) - 2), str(int(YEAR) - 3)]
+
+    awdmtxdf.fillna(value='0', inplace=True)
+
+    mtx = awdmtxdf.to_dict()
+
     allcnt = {}
     past4 = {}
-    
+
     for awd in mtx:
         allcnt[awd] = {}
         past4[awd] = {}
@@ -281,35 +282,36 @@ def awdcounter(awdmtxdf):
             if mtx[awd][team] == '0':
                 allcnt[awd][team] = 0
                 past4[awd][team] = 0
-            else:               
-                for item in mtx[awd][team]:                   
+            else:
+                for item in mtx[awd][team]:
                     if team not in past4[awd]:
                         allcnt[awd][team] = 0
                         past4[awd][team] = 0
                     year = item[0:4]
                     if year in tgtyears:
                         past4[awd][team] += 1
-                    allcnt[awd][team] += 1                                        
+                    allcnt[awd][team] += 1
 
     past4df = pd.DataFrame(past4)
     allcntdf = pd.DataFrame(allcnt)
-    
-    #resequence this mess
+
+    # TODO resequence this mess
     actuals = past4df.columns.tolist()
     possibles = AWDSEQ.copy()
     for item in AWDSEQ:
         if item not in actuals:
-            possibles.remove(item)    
+            possibles.remove(item)
     past4df = past4df[possibles]
-    
+
     actuals = allcntdf.columns.tolist()
     possibles = AWDSEQ.copy()
     for item in AWDSEQ:
         if item not in actuals:
-            possibles.remove(item)    
+            possibles.remove(item)
     allcntdf = allcntdf[possibles]
-                                
-    return past4df, allcntdf    
+
+    return past4df, allcntdf
+
 
 def wffanator(allawds):
     '''
@@ -317,39 +319,36 @@ def wffanator(allawds):
     of the recipients
     '''
     wffas = []
-    
+
     for team in allawds:
         for award in allawds[team]:
-            
+
             if award['award_type'] == 3:
-                #print(award['event_key'], award['recipient_list'][0]['awardee'], team)
+                # print(award['event_key'], award['recipient_list'][0]['awardee'], team)
                 if award['event_key'] == '2009co':
                     wffas.append([award['event_key'], 'Kevin Schimpf', team])
                 else:
                     wffas.append([award['event_key'], award['recipient_list'][0]['awardee'], team])
 
-    wffas.sort()         
-    print('\nWFFA count is:', len(wffas))       
-    pprint(wffas)
+    wffas.sort()
+    print('\nWFFA count is:', len(wffas))
+    ic(wffas)
     return wffas
-        
-                
-        
-    
-    
+
+
 def prescout_event(event):
     '''
     Combine commands together, write to a file.
     '''
-    
+
     xlfile = 'Prescout-' + YEAR + '-' + event + '.xlsx'
     scratchfile = 'Prescout-' + YEAR + '-' + event + '-notes.txt'
-        
-    teamlist = maketeamlist(event)        
-    locations = locstats(teamlist)        
+
+    teamlist = maketeamlist(event)
+    locations = locstats(teamlist)
     current, fullhist = eventmtx(teamlist)
     allawds, awdkeys, awdmx = awdmtx(teamlist)
-    
+
     wffas = wffanator(allawds)
     '''    
     with open(scratchfile, 'w') as file:
@@ -364,74 +363,74 @@ def prescout_event(event):
         file.write(str(allawds))
         file.write('\n\nAward Keys\n')
         file.write(str(awdkeys))
-    '''   
-    #print('\nKeys')
-    #pprint(awdkeys)
-  
+    '''
+    # print('\nKeys')
+    # pprint(awdkeys)
+
     print('Team locations:')
     pprint(locations)
-    
-    curmtx = teamweekmtx(current)    
+
+    curmtx = teamweekmtx(current)
     teamdf = pd.DataFrame(teamlist).transpose()
-    
-    eventteamdf = pd.merge(teamdf,curmtx, left_index=True, right_index=True)
-    #pprint(awdmx)
-    
+
+    eventteamdf = pd.merge(teamdf, curmtx, left_index=True, right_index=True)
+    # pprint(awdmx)
+
     curawddf, awdmtxdf = wrestleawds(awdmx, awdkeys)
-    
+
     past4cntdf, allawdcntdf = awdcounter(awdmtxdf)
-    
-    
-    #print(awdmtxdf.head())
-    
+
+    # print(awdmtxdf.head())
+
     with pd.ExcelWriter(xlfile) as writer:
         eventteamdf.to_excel(writer, 'Team Events')
         curawddf.to_excel(writer, 'Current Awards')
         awdmtxdf.to_excel(writer, 'Full Award Matrix')
         past4cntdf.to_excel(writer, 'Awd Count Current Team')
         allawdcntdf.to_excel(writer, 'All Award Count')
-        
-        
-def makeEventList(year = YEAR):
+
+
+def makeEventList(year=YEAR):
     '''
     List event code, event name, competition level
     '''
-    
+
     eventlist = tbaUtils.get_event_list(year)
-    
+
     result = []
-    
+
     for event in eventlist:
         key = event['key']
         name = event['name']
         level = event['event_type_string']
-        
+
         result.append([key, level])
-    
+
     return result
-    
+
+
 def eventLeveler(eventlist):
     '''
     Take a list of eventcodes and return them by level [CMP, REG, DCMP, DIS]
     '''
-    result = [[],[],[],[]]    
-    
-    cmpdivs = ['carv', 'gal', 'hop', 'new', 'roe', 'tur', 
+    result = [[], [], [], []]
+
+    cmpdivs = ['carv', 'gal', 'hop', 'new', 'roe', 'tur',
                'arc', 'cars', 'cur', 'dal', 'dar', 'tes',
                'cmp', 'cmptx', 'cmpmo', 'cmpmi']
 
     mi = ['dt', 'dt1', 'gg', 'grl', 'gt', 'mi', 'oc', 'oc1', 'swm', 'wc', 'ww']
-               
+
     for event in eventlist:
         shortclli = event[4:]
         el = len(shortclli)
         year = int(event[:4])
-        
+
         print(event, shortclli, el)
-        
+
         if shortclli in cmpdivs:
             result[0].append(event)
-        elif year > 2012: #Naming convention standardized
+        elif year > 2012:  # Naming convention standardized
             if el == 5:
                 if shortclli[2:] == 'cmp':
                     result[2].append(event)
@@ -440,80 +439,43 @@ def eventLeveler(eventlist):
                 else:
                     result[3].append(event)
             elif el == 4:
-                result[1].append(event)  
-        elif year > 2008: #Michigan has districts, still on oldformat names
-            if shortclli == 'gl': #micmp
+                result[1].append(event)
+        elif year > 2008:  # Michigan has districts, still on oldformat names
+            if shortclli == 'gl':  # micmp
                 result[2].append(event)
             elif shortclli in mi:
                 result[3].append(event)
             else:
                 result[1].append(event)
-        else: # No districts exist, and we've already ruled out CMP divisions
+        else:  # No districts exist, and we've already ruled out CMP divisions
             result[1].append(event)
-            
-        
+
     return result
-        
-    
+
+
 def cmpscout(cmp):
     if cmp == 'hou':
         divisions = ['carv', 'gal', 'hop', 'new', 'roe', 'tur']
     else:
         divisions = ['arc', 'cars', 'cur', 'dal', 'dar', 'tes']
-        
+
+
 def matchlistformo(event, year=YEAR):
     matchdictlist = get_event_matches(event, year)
-    
+
     qualteams = []
-    
+
     for match in matchdictlist:
         if match['comp_level'] == 'qm':
             matchnum = match['match_number']
             blue = match['alliances']['blue']['team_keys']
             red = match['alliances']['red']['team_keys']
-            
-            for i in [0,1,2]:
-                j = str(i + 1)
-                qualteams.append([matchnum, 'Red'+j, red[i]])
-                qualteams.append([matchnum, 'Blue'+j, blue[i]])
 
-            
-    
-    qualdf = pd.DataFrame(qualteams, columns = ['Match', 'Position', 'Team'])
-    
-    qualdf.to_excel('MO Matchlist - '+event+'.xlsx', index=False)
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+            for i in [0, 1, 2]:
+                j = str(i + 1)
+                qualteams.append([matchnum, 'Red' + j, red[i]])
+                qualteams.append([matchnum, 'Blue' + j, blue[i]])
+
+    qualdf = pd.DataFrame(qualteams, columns=['Match', 'Position', 'Team'])
+
+    qualdf.to_excel('MO Matchlist - ' + event + '.xlsx', index=False)
