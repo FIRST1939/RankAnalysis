@@ -20,34 +20,77 @@ from datetime import date
 
 YEAR = str(date.today().year)
 
-MASTERKEYS = {0: 'RCA/CCA', 1: 'Winner', 2: 'Finalist', 3: 'WFFA/WFA', 4: 'DLFA',
-              5: 'Volunteer of the Year', 9: 'REI/EI', 10: 'Rookie All-Star',
-              11: 'Gracious Professionalism', 12: 'Coopertition', 13: 'Judges',
-              14: 'Highest Rookie Seed', 15: 'Rookie Inspiration', 16: 'GM Industrial Design',
-              17: 'Quality', 18: 'Safety', 19: 'Sportsmanship', 20: 'Creativity',
-              21: 'Excellence in Engineering', 22: 'Entrepreneurship',
-              23: 'Autodesk Excellence in Design', 24: 'Excellence in Design Award sponsored by Autodesk (3D CAD)',
+MASTERKEYS = {0: 'RCA/CCA',
+              1: 'Winner',
+              2: 'Finalist',
+              3: 'WFFA/WFA',
+              4: 'DLFA',
+              5: 'Volunteer of the Year',
+              9: 'REI/EI',
+              10: 'Rookie All-Star',
+              11: 'Gracious Professionalism',
+              12: 'Coopertition',
+              13: 'Judges',
+              14: 'Highest Rookie Seed',
+              15: 'Rookie Inspiration',
+              16: 'GM Industrial Design',
+              17: 'Quality',
+              18: 'Safety',
+              19: 'Sportsmanship',
+              20: 'Creativity',
+              21: 'Excellence in Engineering',
+              22: 'Entrepreneurship',
+              23: 'Autodesk Excellence in Design',
+              24: 'Excellence in Design Award sponsored by Autodesk (3D CAD)',
               25: 'Championship - Excellence in Design Award sponsored by Autodesk (Animation)',
               26: 'Delphi Driving Tomorrows Technology',
-              27: 'Imagery', 28: 'Media and Technology Award sponsored by Comcast',
-              29: 'Innovation in Control', 30: 'Team Spirit',
-              31: 'Website', 32: 'Autodesk Visualization', 33: 'Autodesk Inventor Award',
-              34: 'FIRST Future Innovator', 38: 'Leadership in Controls',
-              39: '#1 Seed', 40: 'Incredible Play Award', 41: "People's Choice Animation Award",
-              42: 'Autodesk Rising Star Visualization Award', 43: 'Best Offensive Round',
-              44: 'Best Play of the Day Award', 45: 'Featherweight in the Finals',
-              46: 'Most Photogenic', 47: 'Outstanding Defense',
-              48: 'Delphi "Power to Simplify" Award', 49: 'Against All Odds Award',
-              51: 'Chairmans Award Finalist', 53: 'Honorable Mention-Technical Execution',
-              54: 'Autodesk Award for Realization', 56: 'Autodesk Design your Future Award',
+              27: 'Imagery',
+              28: 'Media and Technology Award sponsored by Comcast',
+              29: 'Innovation in Control',
+              30: 'Team Spirit',
+              31: 'Website',
+              32: 'Autodesk Visualization',
+              33: 'Autodesk Inventor Award',
+              34: 'FIRST Future Innovator',
+              38: 'Leadership in Controls',
+              39: '#1 Seed',
+              40: 'Incredible Play Award',
+              41: "People's Choice Animation Award",
+              42: 'Autodesk Rising Star Visualization Award',
+              43: 'Best Offensive Round',
+              44: 'Best Play of the Day Award',
+              45: 'Featherweight in the Finals',
+              46: 'Most Photogenic',
+              47: 'Outstanding Defense',
+              48: 'Delphi "Power to Simplify" Award',
+              49: 'Against All Odds Award',
+              51: 'Chairmans Award Finalist',
+              52: 'Honorable Mention-Content Communication',
+              53: 'Honorable Mention-Technical Execution',
+              54: 'Autodesk Award for Realization',
+              56: 'Autodesk Design your Future Award',
               57: 'Autodesk Design your Future Award Honorable Mentions:',
               58: 'Autodesk Special Recognition for Distinctive Work in the Area of Character Animation:',
-              59: 'High Score', 60: 'Teacher Pioneer Award',
-              61: 'Best Craftsmanship/Ultimate Keeper Award', 62: 'Best Defensive Match',
+              59: 'High Score',
+              60: 'Teacher Pioneer Award',
+              61: 'Best Craftsmanship/Ultimate Keeper Award',
+              62: 'Best Defensive Match',
+              63: 'Play of the Day',
               64: 'Programming',
-              65: 'Professionalism Award', 67: 'Most Improved Team', 68: 'Wildcard',
-              69: "Chairman's Award Finalist", 70: 'Most Improved Robot',
-              71: 'Autonomous Award sponsored by Ford'}
+              65: 'Professionalism Award',
+              67: 'Most Improved Team',
+              68: 'Wildcard',
+              69: "Chairman's Award Finalist",
+              70: 'Most Improved Robot',
+              71: 'Autonomous Award sponsored by Ford',
+              72: 'FIRST Innovation Challenge Semi-Finalist Award',
+              73: 'Rookie Game Changer',
+              74: 'Skills Competition Winner',
+              75: 'Skills Competition Finalist',
+              76: 'Rookie Design Award',
+              77: 'Engineering Design Award',
+              78: "Designer's Award",
+              79: 'Concept Award'}
 
 AWDSEQ = ['Chairman\'s Award Finalist', 'RCA/CCA', 'REI/EI', 'Winner', 'Finalist',
           'Wildcard', 'Excellence in Engineering', 'GM Industrial Design',
@@ -61,8 +104,8 @@ AWDSEQ = ['Chairman\'s Award Finalist', 'RCA/CCA', 'REI/EI', 'Winner', 'Finalist
           'Website', 'Leadership in Controls', '#1 Seed', 'High Score',
           'Incredible Play Award', 'Against All Odds Award',
           'Best Play of the Day Award', 'Best Offensive Round',
-          'Best Defensive Match', 'Best Craftsmanship/Ultimate Keeper Award'
-                                  'Outstanding Defense', 'Featherweight in the Finals',
+          'Best Defensive Match', 'Best Craftsmanship/Ultimate Keeper Award',
+          'Outstanding Defense', 'Featherweight in the Finals',
           'Most Improved Team', 'Most Photogenic',
           'Programming', 'Most Improved Robot',
           'Media and Technology Award sponsored by Comcast',
@@ -332,7 +375,7 @@ def wffanator(allawds):
 
     wffas.sort()
     print('\nWFFA count is:', len(wffas))
-    ic(wffas)
+    pprint(wffas)
     return wffas
 
 
@@ -345,7 +388,7 @@ def prescout_event(event):
     scratchfile = 'Prescout-' + YEAR + '-' + event + '-notes.txt'
 
     teamlist = maketeamlist(event)
-    ic(teamlist)
+    #ic(teamlist)
     locations = locstats(teamlist)
     current, fullhist = eventmtx(teamlist)
     allawds, awdkeys, awdmx = awdmtx(teamlist)
@@ -411,9 +454,9 @@ def makeEventList(year=YEAR):
 
     return result
 
-
+'''
 def covidrookie(teamdf):
-    '''
+    
     Parameters:
         teamdf: pdDataframe containing Team, Nickname, State
 
@@ -422,7 +465,7 @@ def covidrookie(teamdf):
 
         2020Events is a boolean indicating whether the team attended a 2020 event that was not cancelled.
     TODO:This thing doesn't work at all yet
-    '''
+    
     good2020 = ['2020arli', '2020award', '2020bcvi', '2020cadm', '2020cala', '2020caln', '2020cass', '2020cmpmi',
                 '2020cmptx', '2020ctnct', '2020ctwat', '2020facc', '2020gadal', '2020gagai', '2020gzrs', '2020ilch',
                 '2020inblo', '2020isde1', '2020isde2', '2020mabri', '2020mdbet', '2020mijac', '2020mike2', '2020miket',
@@ -437,7 +480,7 @@ def covidrookie(teamdf):
 
     teamdf[events] = tbaUtils.get_team_history(teamdf[team_num])
     ic(teamdf.head())
-
+'''
 
 def eventLeveler(eventlist):
     '''
@@ -513,4 +556,4 @@ def matchlistformo(event, year=YEAR):
 
 #thisevent = input('Enter event to check: ')
 #assert thisevent.isalnum()
-#prescout_event(thisevent)
+#prescout_event('wimi')
