@@ -553,7 +553,69 @@ def matchlistformo(event, year=YEAR):
 
     qualdf.to_excel('MO Matchlist - ' + event + '.xlsx', index=False)
 
+    
+def crmnlevel(event):
+    year = int(event[0:4])
+    length = len(event)
+    if 'cmp' in event:
+        if length == 7:
+            return 'HOF'
+        else:
+            return 'DCMP'
+    else:
+        if year == 2021:
+            return 'R21'
+        else:
+            if length <= 7:
+                return 'R'
+            elif year > 2012 and length ==  8:
+                return 'R'
+            else:
+                state = event[4:6]
+                if state in ['mo', 'mn']:
+                    return 'R'
+                else:
+                    return 'D'
 
+
+def getcrmn(year=YEAR):
+    keylist = tbaUtils.get_event_year_keys()
+    #temp for testing
+    #keylist = ['2022mokc', '2022mokc3', '2022ksla', '2022cave', '2022wayak']
+    pprint(keylist)
+
+    longlist = []
+    for event in keylist:
+        eventawds = tbaUtils.get_event_awards(event[4:])
+        if len(eventawds) > 0 and eventawds[0]['award_type'] == 0:
+            longlist.append(eventawds[0]['recipient_list'][0]['team_key'])
+    pprint(longlist)
+    print()
+
+    teamlist = {}
+    for team in longlist:
+        teamawds = tbaUtils.get_award_history(team[3:])
+        templist = []
+        print('\n',team,'\n')
+        for awd in teamawds:
+            if awd['award_type'] == 0:
+                if crmnlevel(awd['event_key']) != 'D' or awd['event_key'][:4] == '2022':
+                    templist.append(awd['event_key'])
+        #print(templist)
+        teamlist[team] = templist
+                
+    pprint(teamlist)
+
+    teamwins = {}
+    print()
+    for team in teamlist.keys():
+        teamwins[team]=len(teamlist[team])
+
+    pprint(teamwins)
+
+
+
+    
 #thisevent = input('Enter event to check: ')
 #assert thisevent.isalnum()
 #prescout_event('wimi')

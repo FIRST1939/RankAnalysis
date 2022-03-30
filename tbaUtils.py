@@ -70,6 +70,12 @@ def get_event_list(year=THISYEAR):
     result = get_request(fullurl)
     return result
 
+def get_event_year_keys(year=THISYEAR):
+    fullurl = URL + 'events/' + str(year) + '/keys'
+    print(fullurl)
+    result = get_request(fullurl)
+    return result
+
 def get_event_teams(event, year=THISYEAR):
     event_key = str(year) + event
     fullurl = URL + 'event/' + event_key + '/teams'
