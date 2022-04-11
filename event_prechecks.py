@@ -17,6 +17,7 @@ import pandas as pd
 from pprint import pprint
 from icecream import ic
 from datetime import date
+import urllib
 
 YEAR = str(date.today().year)
 
@@ -26,6 +27,7 @@ MASTERKEYS = {0: 'RCA/CCA',
               3: 'WFFA/WFA',
               4: 'DLFA',
               5: 'Volunteer of the Year',
+              6: 'Founders Award',
               9: 'REI/EI',
               10: 'Rookie All-Star',
               11: 'Gracious Professionalism',
@@ -78,6 +80,7 @@ MASTERKEYS = {0: 'RCA/CCA',
               63: 'Play of the Day',
               64: 'Programming',
               65: 'Professionalism Award',
+              66: 'The Golden Corndog Award',
               67: 'Most Improved Team',
               68: 'Wildcard',
               69: "Chairman's Award Finalist",
@@ -609,12 +612,61 @@ def getcrmn(year=YEAR):
     teamwins = {}
     print()
     for team in teamlist.keys():
-        teamwins[team]=len(teamlist[team])
+        teamwins[team]=len(set([event[:4] for event in teamlist[team]]))
 
     pprint(teamwins)
 
+    teamwincountdf = pd.DataFrame({'Team':teamwins.keys(),'WinCount':teamwins.values()})
+    windf = pd.DataFrame({'Team':teamlist.keys(),'Awards':teamlist.values()})
+    
+    with pd.ExcelWriter('crmn-'+year+'.xlsx') as writer:
+        teamwincountdf.to_excel(writer, 'Win Counts', index=False)
+        windf.to_excel(writer, 'Win List', index=False)
+        
 
+def findawd(awdlist,awdkey):
+    for awd in awdlist:
+        #pprint(awd)
+        if awd['award_type'] == awdkey:
+            #print('Gotcha',awdkey)
+            return awd
 
+def getwffavoy():
+    '''
+    Looking for people are both WFFAs and VOYs (and maybe DLFAs later), by team
+    '''
+
+    wffas = {}
+    voys = {}
+    dlfas = {}
+
+    for year in range(2021,2023):
+        # Get event list for year
+        keylist = tbaUtils.get_event_year_keys(year)
+        # Pull award list for each event
+        for event in keylist:
+            try:
+                tempevent = tbaUtils.get_event_awards(event[4:],year)
+                voy = findawd(tempevent,5)
+                wffa = findawd(tempevent,3)
+                dlfa = findawd(tempevent,4)
+                #pprint(voy)
+                #pprint(wffa)
+                if voy is not None:
+                    voys[voy['event_key']] = voy['recipient_list']
+                if wffa is not None:
+                    wffas[wffa['event_key']] = wffa['recipient_list']
+                if dlfa is not None:
+                    dlfas[dlfa['event_key']] = dlfa['recipient_list']
+            except urllib.error.HTTPError:
+                continue
+   
+    print('\nVOY List')
+    pprint(voys)
+    print('\nWFFA List')
+    pprint(wffas)
+    
+    
     
 #thisevent = input('Enter event to check: ')
 #assert thisevent.isalnum()
