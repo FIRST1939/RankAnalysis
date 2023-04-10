@@ -18,6 +18,7 @@ from pprint import pprint
 from icecream import ic
 from datetime import date
 import urllib
+from time import sleep
 
 YEAR = str(date.today().year)
 
@@ -535,6 +536,11 @@ def cmpscout(cmp):
     else:
         divisions = ['arc', 'cars', 'cur', 'dal', 'dar', 'tes']
 
+    for event in divisions:
+        print(event)
+        prescout_event(event)
+        sleep(10)
+
 
 def matchlistformo(event, year=YEAR):
     matchdictlist = tbaUtils.get_event_matches(event, year)
@@ -575,7 +581,7 @@ def crmnlevel(event):
                 return 'R'
             else:
                 state = event[4:6]
-                if state in ['mo', 'mn']:
+                if state in ['mo', 'mn', 'ny', 'tu']:
                     return 'R'
                 else:
                     return 'D'
@@ -591,21 +597,29 @@ def getcrmn(year=YEAR):
     for event in keylist:
         eventawds = tbaUtils.get_event_awards(event[4:])
         if len(eventawds) > 0 and eventawds[0]['award_type'] == 0:
-            longlist.append(eventawds[0]['recipient_list'][0]['team_key'])
+            longlist.append(eventawds[0]['recipient_list'][0]['team_key'][3:])
     pprint(longlist)
     print()
 
     teamlist = {}
+    teamnames = {}
+    teamstate = {}
     for team in longlist:
-        teamawds = tbaUtils.get_award_history(team[3:])
+        teamawds = tbaUtils.get_award_history(team)
         templist = []
         print('\n',team,'\n')
         for awd in teamawds:
             if awd['award_type'] == 0:
-                if crmnlevel(awd['event_key']) != 'D' or awd['event_key'][:4] == '2022':
+                if crmnlevel(awd['event_key']) != 'D':# or awd['event_key'][:4] == '2022':
                     templist.append(awd['event_key'])
         #print(templist)
-        teamlist[team] = templist
+        teamlist[int(team)] = templist
+        teamdata = tbaUtils.get_team(team)
+        teamnames[int(team)] = teamdata['nickname']
+        if teamdata['country'] in ['USA','Canada']:
+            teamstate[int(team)] = teamdata['state_prov']
+        else:
+            teamstate[int(team)] = teamdata['country']
                 
     pprint(teamlist)
 
@@ -616,7 +630,7 @@ def getcrmn(year=YEAR):
 
     pprint(teamwins)
 
-    teamwincountdf = pd.DataFrame({'Team':teamwins.keys(),'WinCount':teamwins.values()})
+    teamwincountdf = pd.DataFrame({'Team':teamwins.keys(),'WinCount':teamwins.values(),'nickname':teamnames.values(),'State':teamstate.values()})
     windf = pd.DataFrame({'Team':teamlist.keys(),'Awards':teamlist.values()})
     
     with pd.ExcelWriter('crmn-'+year+'.xlsx') as writer:
@@ -640,7 +654,7 @@ def getwffavoy():
     voys = {}
     dlfas = {}
 
-    for year in range(2021,2023):
+    for year in range(1992,2023):
         # Get event list for year
         keylist = tbaUtils.get_event_year_keys(year)
         # Pull award list for each event
@@ -660,12 +674,39 @@ def getwffavoy():
                     dlfas[dlfa['event_key']] = dlfa['recipient_list']
             except urllib.error.HTTPError:
                 continue
+        sleep(3)
    
     print('\nVOY List')
     pprint(voys)
     print('\nWFFA List')
     pprint(wffas)
+
+    #Invert awardee and event
+    voynames = []
+    for event in voys.keys():
+        for awardee in voys[event]:
+            voynames.append({'name': awardee['awardee'], 'event': event, 'team_key': awardee['team_key']})
+    print('\nVOYs by Name')
+    pprint(voynames)
+    wffanames = []
+    for event in wffas.keys():
+        for awardee in wffas[event]:
+            wffanames.append({'name': awardee['awardee'], 'event': event, 'team_key': awardee['team_key']})
+
+    voydf = pd.DataFrame(voynames)
+    wffadf = pd.DataFrame(wffanames)
+
+    wffavoy = wffadf.merge(voydf,how='inner',on=['name','team_key'],suffixes=['_wffa','_voy'])
+
+    with pd.ExcelWriter('wffavoy.xlsx') as writer:
+        wffadf.to_excel(writer, 'WFFAs', index=False)
+        voydf.to_excel(writer, 'VOYs', index=False)
+        wffavoy.to_excel(writer, 'Double winners',index=False)
+
     
+
+    
+
     
     
 #thisevent = input('Enter event to check: ')

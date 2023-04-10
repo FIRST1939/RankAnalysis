@@ -77,7 +77,7 @@ def get_team_history(team_num):
     fullurl = URL + 'team/frc' + str(team_num) + '/events/keys'
     print(fullurl)
     result = get_request(fullurl)
-    print('tick')
+    sleep(0.25)
     return result
 
 
@@ -100,7 +100,7 @@ def get_award_history(team_num):
     fullurl = URL + 'team/frc' + str(team_num) + '/awards'
     print(fullurl)
     result = get_request(fullurl)
-    print('tick')
+    sleep(0.25)
     return result
 
 
@@ -338,7 +338,13 @@ def get_event_rankings(event, year=THISYEAR):
     result = get_request(fullurl)
     return result
 
-
+def get_event_oprs(event, year=THISYEAR):
+    event_key = str(year) + event
+    fullurl = URL + 'event/' + event_key + '/oprs'
+    print(fullurl)
+    result = get_request(fullurl)
+    return result
+    
 def make_eventweekmtx(year=THISYEAR):
     eventlist = get_event_list(year)
 
